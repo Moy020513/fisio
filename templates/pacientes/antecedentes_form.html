@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Editar Antecedentes No Patológicos{% endblock %}
+
+{% block page_title %}Editar Antecedentes No Patológicos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Antecedentes No Patológicos</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+
+                        <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-running"></i> Actividad física</h6>
+                        <div class="form-check form-switch mb-3">
+                            {{ form.realiza_actividad_fisica }}
+                            <label class="form-check-label">{{ form.realiza_actividad_fisica.label }}</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.frecuencia_ejercicio.label }}</label>
+                            {{ form.frecuencia_ejercicio }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.tipo_ejercicio.label }}</label>
+                            {{ form.tipo_ejercicio }}
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-apple-alt"></i> Alimentación</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.tipo_alimentacion.label }}</label>
+                            {{ form.tipo_alimentacion }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.descripcion_alimentacion.label }}</label>
+                            {{ form.descripcion_alimentacion }}
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-bed"></i> Sueño</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.horas_sueno.label }}</label>
+                                {{ form.horas_sueno }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.calidad_sueno.label }}</label>
+                                {{ form.calidad_sueno }}
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-tint"></i> Hidratación</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.litros_agua_diarios.label }}</label>
+                            {{ form.litros_agua_diarios }}
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-capsules"></i> Suplementación</h6>
+                        <div class="form-check form-switch mb-3">
+                            {{ form.usa_suplementos }}
+                            <label class="form-check-label">{{ form.usa_suplementos.label }}</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.suplementos_descripcion.label }}</label>
+                            {{ form.suplementos_descripcion }}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="{% url 'pacientes:antecedentes' paciente.pk %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ paciente.nombre_completo }} - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Detalle del Paciente{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">
+                            <i class="fas fa-user-circle"></i> {{ paciente.nombre_completo }}
+                        </h5>
+                        <small class="text-muted">
+                            Edad: {{ paciente.edad }} años |
+                            Género: {{ paciente.get_genero_display|default:"-" }}
+                        </small>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary">{{ paciente.get_tipo_paciente_display }}</span>
+                        <span class="badge bg-info">Activo</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3 border-bottom pb-2">
+                                <i class="fas fa-phone"></i> Contacto
+                            </h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="text-muted">Teléfono:</td>
+                                    <td><strong>{{ paciente.telefono|default:"-" }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Tel. Emergencia:</td>
+                                    <td>{{ paciente.telefono_emergencia|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Email:</td>
+                                    <td>
+                                        {% if paciente.email %}
+                                            <a href="mailto:{{ paciente.email }}">{{ paciente.email }}</a>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <h6 class="mb-3 border-bottom pb-2 mt-4">
+                                <i class="fas fa-map-marker-alt"></i> Domicilio
+                            </h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="text-muted">Dirección:</td>
+                                    <td><strong>{{ paciente.domicilio|default:"-" }}</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="mb-3 border-bottom pb-2">
+                                <i class="fas fa-clipboard"></i> Información Médica
+                            </h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="text-muted">Tipo de Paciente:</td>
+                                    <td><strong>{{ paciente.get_tipo_paciente_display }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Fecha de Registro:</td>
+                                    <td>{{ paciente.fecha_registro|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Última Actualización:</td>
+                                    <td>{{ paciente.ultima_actualizacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Alergias:</td>
+                                    <td>{{ paciente.alergias|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Religión:</td>
+                                    <td>{{ paciente.religion|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="d-flex gap-2 justify-content-between">
+                        <a href="{% url 'pacientes:lista' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <div>
+                            <a href="{% url 'pacientes:antecedentes' paciente.pk %}" class="btn btn-info btn-sm">
+                                <i class="fas fa-history"></i> Antecedentes
+                            </a>
+                            <a href="{% url 'pacientes:editar' paciente.pk %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'pacientes:eliminar' paciente.pk %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historias Clínicas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-medical"></i> Historias Clínicas
+                    </h5>
+                    <a href="{% url 'historiaclinica:crear' paciente.pk %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Nueva Historia
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if paciente.historias_clinicas.all %}
+                        <div class="list-group">
+                            {% for historia in paciente.historias_clinicas.all %}
+                                <a href="{% url 'historiaclinica:detalle' historia.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="mb-1">{{ historia.diagnostico|default:"Sin diagnóstico" }}</h6>
+                                            <small class="text-muted">
+                                                Evaluación: {{ historia.fecha_evaluacion|date:"d/m/Y" }} |
+                                                EVA: {{ historia.escala_eva|default:"-" }}
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-success">{{ historia.evoluciones.count }} sesiones</span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">No hay historias clínicas registradas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ terapeuta.nombre_completo }} - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Detalle del Terapeuta{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1"><i class="fas fa-user-md"></i> {{ terapeuta.nombre_completo }}</h5>
+                        <small class="text-muted">Correo: {{ terapeuta.email }} | Teléfono: {{ terapeuta.telefono }}</small>
+                    </div>
+                    <span class="badge {% if terapeuta.activo %}bg-success{% else %}bg-secondary{% endif %}">
+                        {% if terapeuta.activo %}Activo{% else %}Inactivo{% endif %}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-briefcase-medical"></i> Especialidades</h6>
+                    <p class="mb-0">{{ terapeuta.especialidades|linebreaks }}</p>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between">
+                    <a href="{% url 'citas:terapeutas' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                    <a href="{% url 'citas:terapeuta-editar' terapeuta.pk %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

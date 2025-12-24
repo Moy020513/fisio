@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Registrar Estudio clínico{% endblock %}
+{% block page_title %}Registrar Estudio clínico{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-x-ray"></i> {{ titulo }}</h6>
+                </div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo de estudio</label>
+                                {{ form.tipo }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha del estudio</label>
+                                {{ form.fecha_estudio }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Descripción</label>
+                                {{ form.descripcion }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Resultado</label>
+                                {{ form.resultado }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Archivo adjunto</label>
+                                {{ form.archivo }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-between">
+                        <a href="{% url 'historiaclinica:detalle' historia.pk %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Cancelar</a>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

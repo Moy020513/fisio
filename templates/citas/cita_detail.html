@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Detalle de Cita{% endblock %}
+{% block page_title %}Detalle de Cita{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1"><i class="fas fa-calendar-alt"></i> {{ cita.paciente.nombre_completo }}</h5>
+                        <small class="text-muted">{{ cita.fecha_hora|date:"d/m/Y" }} - {{ cita.fecha_hora|time:"H:i" }} a {{ cita.get_hora_fin|time:"H:i" }}</small>
+                    </div>
+                    <span class="badge {% if cita.estado == 'disponible' %}bg-success{% elif cita.estado == 'ocupada' %}bg-primary{% elif cita.estado == 'completada' %}bg-info{% else %}bg-danger{% endif %}">
+                        {{ cita.get_estado_display|default:cita.estado }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-user-md"></i> Terapeuta</h6>
+                    <p class="mb-3">{{ cita.terapeuta.nombre_completo|default:"Sin asignar" }}</p>
+
+                    <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-list"></i> Detalles</h6>
+                    <p><strong>Tipo de sesión:</strong> {{ cita.get_tipo_sesion_display }}</p>
+                    <p><strong>Duración:</strong> {{ cita.duracion_minutos }} minutos</p>
+                    <p><strong>Motivo:</strong> {{ cita.motivo_cita|default:"-" }}</p>
+                    <p><strong>Notas adicionales:</strong> {{ cita.notas_adicionales|default:"-" }}</p>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between">
+                    <a href="{% url 'citas:lista' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="{% url 'citas:cancelar' cita.pk %}" class="btn btn-warning btn-sm"><i class="fas fa-times"></i> Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

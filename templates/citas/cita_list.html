@@ -1,0 +1,162 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Citas - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Gestión de Citas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <form method="get" class="form-inline d-flex gap-2">
+                        <select name="estado" class="form-select" style="max-width: 200px;">
+                            <option value="">Todos los estados</option>
+                            <option value="disponible">Disponible</option>
+                            <option value="ocupada">Ocupada</option>
+                            <option value="completada">Completada</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'citas:crear' %}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nueva Cita
+                    </a>
+                    <a href="{% url 'citas:proximas' %}" class="btn btn-info">
+                        <i class="fas fa-calendar"></i> Próximas 7 días
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total de Citas</h6>
+                    <h3 class="mb-0">{{ total_citas }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Citas Próximas</h6>
+                    <h3 class="mb-0">{{ citas_proximas }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de citas -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Lista de Citas</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if citas %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Terapeuta</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Estado</th>
+                                <th>Duración</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cita in citas %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ cita.paciente.nombre_completo }}</strong>
+                                    </td>
+                                    <td>{{ cita.terapeuta.nombre_completo|default:"-" }}</td>
+                                    <td>{{ cita.fecha_hora|date:"d/m/Y" }}</td>
+                                    <td>{{ cita.fecha_hora|time:"H:i" }} - {{ cita.get_hora_fin|time:"H:i" }}</td>
+                                    <td>
+                                        {% if cita.estado == 'disponible' %}
+                                            <span class="badge bg-success">Disponible</span>
+                                        {% elif cita.estado == 'ocupada' %}
+                                            <span class="badge bg-primary">Ocupada</span>
+                                        {% elif cita.estado == 'completada' %}
+                                            <span class="badge bg-info">Completada</span>
+                                        {% elif cita.estado == 'cancelada' %}
+                                            <span class="badge bg-danger">Cancelada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ cita.duracion_minutos }} min</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'citas:detalle' cita.pk %}" class="btn btn-sm btn-info" title="Ver detalle">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'citas:cancelar' cita.pk %}" class="btn btn-sm btn-warning" title="Cancelar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                    <nav aria-label="Paginación" class="p-3">
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">Primera</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                        &lsaquo; Anterior
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                </span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                        Siguiente &rsaquo;
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                        Última
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info m-3">
+                    <i class="fas fa-info-circle"></i> No hay citas registradas.
+                    <a href="{% url 'citas:crear' %}" class="btn btn-sm btn-primary">Crear nueva cita</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

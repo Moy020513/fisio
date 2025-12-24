@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% block title %}Evoluciones{% endblock %}
+{% block page_title %}Evoluciones del Tratamiento{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-notes-medical"></i> Evoluciones de {{ historia.paciente.nombre_completo }}</h5>
+            <a class="btn btn-success btn-sm" href="{% url 'historiaclinica:evolucion-crear' historia.pk %}"><i class="fas fa-plus"></i> Registrar sesión</a>
+        </div>
+        <div class="card-body p-0">
+            {% if evoluciones %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Sesión</th>
+                                <th>EVA</th>
+                                <th>Notas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ev in evoluciones %}
+                                <tr>
+                                    <td>{{ ev.fecha_sesion|date:"d/m/Y" }}</td>
+                                    <td>{{ ev.numero_sesion }}</td>
+                                    <td>{{ ev.escala_eva_sesion|default:"-" }}</td>
+                                    <td>{{ ev.notas_sesion|truncatechars:80 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="p-3 text-muted">No hay evoluciones registradas.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

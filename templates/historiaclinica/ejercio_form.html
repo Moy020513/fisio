@@ -1,0 +1,69 @@
+{% extends 'base/base.html' %}
+{% block title %}Agregar Ejercicio{% endblock %}
+{% block page_title %}Agregar Ejercicio Terapéutico{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-dumbbell"></i> Agregar Ejercicio</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.nombre_ejercicio.label }}</label>
+                            {{ form.nombre_ejercicio }}
+                            {% if form.nombre_ejercicio.errors %}<div class="invalid-feedback d-block">{{ form.nombre_ejercicio.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.descripcion.label }}</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}<div class="invalid-feedback d-block">{{ form.descripcion.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{{ form.series.label }}</label>
+                                {{ form.series }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{{ form.repeticiones.label }}</label>
+                                {{ form.repeticiones }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{{ form.duracion_segundos.label }}</label>
+                                {{ form.duracion_segundos }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.frecuencia.label }}</label>
+                            {{ form.frecuencia }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.dias_semana.label }}</label>
+                            {{ form.dias_semana }}
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            {{ form.es_ejercicio_casa }}
+                            <label class="form-check-label">{{ form.es_ejercicio_casa.label }}</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.notas.label }}</label>
+                            {{ form.notas }}
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-secondary" href="{% url 'historiaclinica:detalle' historia.pk %}"><i class="fas fa-times"></i> Cancelar</a>
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

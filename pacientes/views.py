@@ -1,0 +1,170 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.db.models import Q
+from pacientes.models import Paciente
+from pacientes.forms import PacienteForm, AntecedentesNoPatologicosForm, DatosNutricionForm
+
+
+class PacienteListView(LoginRequiredMixin, ListView):
+    """Lista todos los pacientes del sistema."""
+    model = Paciente
+    template_name = 'pacientes/paciente_list.html'
+    context_object_name = 'pacientes'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Paciente.objects.all().order_by('-fecha_registro')
+        busqueda = self.request.GET.get('busqueda')
+        if busqueda:
+            queryset = queryset.filter(
+                Q(nombres__icontains=busqueda)
+                | Q(apellidos__icontains=busqueda)
+                | Q(telefono__icontains=busqueda)
+                | Q(email__icontains=busqueda)
+            )
+        tipo = self.request.GET.get('tipo')
+        if tipo:
+            queryset = queryset.filter(tipo_paciente=tipo)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_pacientes'] = Paciente.objects.count()
+        context['tipos_paciente'] = [
+            ('consulta_unica', 'Consulta Única'),
+            ('patologia', 'Patología'),
+            ('estetico', 'Estético'),
+            ('estetico_facial', 'Estético Facial'),
+        ]
+        context['busqueda'] = self.request.GET.get('busqueda', '')
+        context['tipo_filtro'] = self.request.GET.get('tipo', '')
+        return context
+
+
+class PacienteDetailView(LoginRequiredMixin, DetailView):
+    """Detalle completo de un paciente."""
+    model = Paciente
+    template_name = 'pacientes/paciente_detail.html'
+    context_object_name = 'paciente'
+    pk_url_kwarg = 'pk'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente = self.get_object()
+        context['antecedentes'] = paciente.antecedentes_patologicos.all()
+        context['antecedentes_no_pat'] = getattr(paciente, 'antecedentes_no_patologicos', None)
+        context['nutricion'] = getattr(paciente, 'datos_nutricion', None)
+        return context
+
+
+class PacienteCreateView(LoginRequiredMixin, CreateView):
+    """Crear nuevo paciente."""
+    model = Paciente
+    form_class = PacienteForm
+    template_name = 'pacientes/paciente_form.html'
+    success_url = reverse_lazy('pacientes:lista')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Registrar Nuevo Paciente'
+        context['accion'] = 'crear'
+        return context
+
+
+class PacienteUpdateView(LoginRequiredMixin, UpdateView):
+    """Actualizar información del paciente."""
+    model = Paciente
+    form_class = PacienteForm
+    template_name = 'pacientes/paciente_form.html'
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('pacientes:lista')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f'Editar Paciente: {self.object.nombre_completo}'
+        context['accion'] = 'editar'
+        return context
+
+
+class PacienteDeleteView(LoginRequiredMixin, DeleteView):
+    """Eliminar paciente."""
+    model = Paciente
+    template_name = 'pacientes/paciente_confirm_delete.html'
+    success_url = reverse_lazy('pacientes:lista')
+    pk_url_kwarg = 'pk'
+
+
+class AntecedentesDetailView(LoginRequiredMixin, DetailView):
+    """Ver antecedentes no patológicos."""
+    model = Paciente
+    template_name = 'pacientes/antecedentes_detail.html'
+    context_object_name = 'paciente'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente = self.get_object()
+        context['antecedentes'] = getattr(paciente, 'antecedentes_no_patologicos', None)
+        return context
+
+
+class AntecedentesUpdateView(LoginRequiredMixin, UpdateView):
+    """Actualizar antecedentes no patológicos."""
+    model = Paciente
+    form_class = AntecedentesNoPatologicosForm
+    template_name = 'pacientes/antecedentes_form.html'
+    pk_url_kwarg = 'pk'
+
+    def get_object(self):
+        paciente = get_object_or_404(Paciente, pk=self.kwargs['pk'])
+        antecedentes = getattr(paciente, 'antecedentes_no_patologicos', None)
+        if not antecedentes:
+            from pacientes.models import AntecedentesNoPatologicos
+            antecedentes = AntecedentesNoPatologicos.objects.create(paciente=paciente)
+        return antecedentes
+
+    def get_success_url(self):
+        return reverse_lazy('pacientes:detalle', kwargs={'pk': self.object.paciente.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['paciente'] = self.object.paciente
+        return context
+
+
+class NutricionDetailView(LoginRequiredMixin, DetailView):
+    """Ver datos de nutrición."""
+    model = Paciente
+    template_name = 'pacientes/nutricion_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente = self.get_object()
+        context['nutricion'] = getattr(paciente, 'datos_nutricion', None)
+        return context
+
+
+class NutricionCreateView(LoginRequiredMixin, CreateView):
+    """Crear datos de nutrición."""
+    model = None
+    form_class = DatosNutricionForm
+    template_name = 'pacientes/nutricion_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('pacientes:nutricion-detalle', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        from pacientes.models import Paciente
+        context = super().get_context_data(**kwargs)
+        context['paciente'] = get_object_or_404(Paciente, pk=self.kwargs['pk'])
+        return context
+
+    def form_valid(self, form):
+        from pacientes.models import Paciente, DatosNutricion
+        paciente = get_object_or_404(Paciente, pk=self.kwargs['pk'])
+        nutricion = form.save(commit=False)
+        nutricion.paciente = paciente
+        nutricion.save()
+        return redirect(self.get_success_url())

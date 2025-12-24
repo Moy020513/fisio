@@ -1,0 +1,104 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ titulo }} - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        {% if accion == 'crear' %}
+                            <i class="fas fa-calendar-plus"></i> Agendar Nueva Cita
+                        {% else %}
+                            <i class="fas fa-calendar-edit"></i> Editar Cita
+                        {% endif %}
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Error:</strong>
+                                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+
+                        <h6 class="mb-3 mt-3 border-bottom pb-2"><i class="fas fa-calendar"></i> Información de la Cita</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.paciente.label }}</label>
+                                {{ form.paciente }}
+                                {% if form.paciente.errors %}<div class="invalid-feedback d-block">{{ form.paciente.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.terapeuta.label }}</label>
+                                {{ form.terapeuta }}
+                                {% if form.terapeuta.errors %}<div class="invalid-feedback d-block">{{ form.terapeuta.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.fecha_hora.label }}</label>
+                                {{ form.fecha_hora }}
+                                {% if form.fecha_hora.errors %}<div class="invalid-feedback d-block">{{ form.fecha_hora.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.duracion_minutos.label }}</label>
+                                {{ form.duracion_minutos }}
+                                {% if form.duracion_minutos.errors %}<div class="invalid-feedback d-block">{{ form.duracion_minutos.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-list"></i> Detalles</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.tipo_sesion.label }}</label>
+                                {{ form.tipo_sesion }}
+                                {% if form.tipo_sesion.errors %}<div class="invalid-feedback d-block">{{ form.tipo_sesion.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.estado.label }}</label>
+                                {{ form.estado }}
+                                {% if form.estado.errors %}<div class="invalid-feedback d-block">{{ form.estado.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.motivo_cita.label }}</label>
+                            {{ form.motivo_cita }}
+                            {% if form.motivo_cita.errors %}<div class="invalid-feedback d-block">{{ form.motivo_cita.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.notas_adicionales.label }}</label>
+                            {{ form.notas_adicionales }}
+                            {% if form.notas_adicionales.errors %}<div class="invalid-feedback d-block">{{ form.notas_adicionales.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{% url 'citas:lista' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {% if accion == 'crear' %}Agendar Cita{% else %}Guardar Cambios{% endif %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select { border-radius: 5px; border: 2px solid #e0e0e0; padding: 10px 15px; transition: border-color 0.3s; }
+    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); }
+    .invalid-feedback { color: #dc3545; font-size: 13px; margin-top: 5px; }
+    h6 { color: #333; font-weight: 600; }
+</style>
+{% endblock %}

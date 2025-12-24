@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Fisioterapia{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Overlay para móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="{% static 'img/fisio.png' %}" alt="Fisioterapia Clinic" class="logo-img">
+            <h5>Fisio</h5>
+            <p>Sistema de Gestión</p>
+        </div>
+
+        <ul class="sidebar-nav">
+            <!-- Dashboard -->
+            <li class="section-title">Principal</li>
+            <li>
+                <a href="{% url 'dashboard' %}" class="{% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-home"></i> <span>Panel de control</span>
+                </a>
+            </li>
+
+            <!-- Pacientes -->
+            <li class="section-title">Pacientes</li>
+            <li>
+                <a href="{% url 'pacientes:lista' %}" class="{% if 'pacientes' in request.resolver_match.app_names %}active{% endif %}">
+                    <i class="fas fa-users"></i> <span>Pacientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'pacientes:crear' %}">
+                    <i class="fas fa-user-plus"></i> <span>Nuevo Paciente</span>
+                </a>
+            </li>
+
+            <!-- Citas -->
+            <li class="section-title">Citas</li>
+            <li>
+                <a href="{% url 'citas:lista' %}">
+                    <i class="fas fa-calendar-check"></i> <span>Citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'citas:crear' %}">
+                    <i class="fas fa-calendar-plus"></i> <span>Agendar Cita</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'citas:proximas' %}">
+                    <i class="fas fa-calendar-alt"></i> <span>Próximas</span>
+                </a>
+            </li>
+
+            <!-- Historia Clínica -->
+            <li class="section-title">Clínica</li>
+            <li>
+                <a href="{% url 'historiaclinica:lista' %}">
+                    <i class="fas fa-file-medical"></i> <span>Historias</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'historiaclinica:estudios-global' %}">
+                    <i class="fas fa-x-ray"></i> <span>Estudios</span>
+                </a>
+            </li>
+
+            <!-- Tratamientos -->
+            <li class="section-title">Estética</li>
+            <li>
+                <a href="{% url 'tratamientos:lista' %}">
+                    <i class="fas fa-spa"></i> <span>Tratamientos</span>
+                </a>
+            </li>
+
+            <!-- Usuario -->
+            <li class="section-title">Sesión</li>
+            <li>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; cursor: pointer; color: inherit; font-size: inherit; width: 100%; text-align: left;">
+                        <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <img src="{% static 'img/fisio.png' %}" alt="Fisioterapia Clinic" class="topbar-logo">
+                <a href="{% url 'dashboard' %}" class="btn-home" title="Ir al inicio">
+                    <i class="fas fa-home"></i>
+                </a>
+                <h2>{% block page_title %}Sistema de Fisioterapia{% endblock %}</h2>
+            </div>
+            <div class="topbar-user">
+                <div class="user-info">
+                    <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
+                    <p class="user-email">{{ user.email }}</p>
+                </div>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Breadcrumb -->
+            {% block breadcrumb %}{% endblock %}
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" role="alert">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Page Content -->
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; {% now "Y" %} Sistema de Fisioterapia. Todos los derechos reservados.</p>
+            <p class="developer">
+                <i class="fas fa-code"></i>
+                Desarrollado por: ING. Moisés Martínez Vázquez
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.getElementById('mainContent');
+
+        // Toggle del Sidebar
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+
+        // Cerrar sidebar al hacer clic en el overlay
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Cerrar sidebar al hacer clic en un enlace (en móvil y desktop)
+        document.querySelectorAll('.sidebar-nav a, .sidebar-nav button').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Ajustar comportamiento al redimensionar ventana
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

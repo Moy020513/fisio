@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ titulo|default:"Terapeuta" }} - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}{{ titulo|default:"Terapeuta" }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-md"></i> {{ titulo|default:"Terapeuta" }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.nombres.label }}</label>
+                                {{ form.nombres }}
+                                {% if form.nombres.errors %}<div class="invalid-feedback d-block">{{ form.nombres.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.apellidos.label }}</label>
+                                {{ form.apellidos }}
+                                {% if form.apellidos.errors %}<div class="invalid-feedback d-block">{{ form.apellidos.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.email.label }}</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.telefono.label }}</label>
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}<div class="invalid-feedback d-block">{{ form.telefono.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.especialidades.label }}</label>
+                            {{ form.especialidades }}
+                            {% if form.especialidades.errors %}<div class="invalid-feedback d-block">{{ form.especialidades.errors.0 }}</div>{% endif %}
+                            <small class="form-text text-muted"><i class="fas fa-info-circle"></i> Separe con comas o listas las especialidades relevantes.</small>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            {{ form.activo }}
+                            <label class="form-check-label">{{ form.activo.label }}</label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'citas:terapeutas' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

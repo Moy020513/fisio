@@ -1,0 +1,90 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Terapeutas - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Gestión de Terapeutas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0"><i class="fas fa-user-md"></i> Listado de Terapeutas</h5>
+                <small class="text-muted">Administre los profesionales disponibles para citas</small>
+            </div>
+            <a href="{% url 'citas:terapeuta-crear' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Nuevo Terapeuta
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            {% if terapeutas %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Especialidades</th>
+                                <th>Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for terapeuta in terapeutas %}
+                                <tr>
+                                    <td><strong>{{ terapeuta.nombre_completo }}</strong></td>
+                                    <td>{{ terapeuta.email }}</td>
+                                    <td>{{ terapeuta.telefono }}</td>
+                                    <td class="text-muted">{{ terapeuta.especialidades|truncatechars:60 }}</td>
+                                    <td>
+                                        {% if terapeuta.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{% url 'citas:terapeuta-detalle' terapeuta.pk %}" class="btn btn-sm btn-info" title="Ver detalle">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'citas:terapeuta-editar' terapeuta.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if is_paginated %}
+                    <nav aria-label="Paginación" class="p-3">
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page=1">Primera</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo; Anterior</a></li>
+                            {% endif %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente &rsaquo;</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info m-3">
+                    <i class="fas fa-info-circle"></i> No hay terapeutas registrados.
+                    <a href="{% url 'citas:terapeuta-crear' %}" class="btn btn-sm btn-primary">Agregar terapeuta</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

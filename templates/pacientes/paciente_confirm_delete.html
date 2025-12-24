@@ -1,0 +1,79 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Confirmar eliminación - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                    </div>
+
+                    <p class="mb-3">
+                        ¿Está seguro de que desea eliminar el paciente 
+                        <strong>{{ paciente.nombre_completo }}</strong>?
+                    </p>
+
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <table class="table table-sm mb-0">
+                                <tr>
+                                    <td class="text-muted">Teléfono:</td>
+                                    <td>{{ paciente.telefono|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Tel. Emergencia:</td>
+                                    <td>{{ paciente.telefono_emergencia|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Email:</td>
+                                    <td>{{ paciente.email|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Domicilio:</td>
+                                    <td>{{ paciente.domicilio|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Historias Clínicas:</td>
+                                    <td>{{ paciente.historiaclinica_set.count }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if paciente.historiaclinica_set.all %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Nota:</strong> Este paciente tiene {{ paciente.historiaclinica_set.count }} 
+                            historia(s) clínica(s) asociada(s) que también será(n) eliminada(s).
+                        </div>
+                    {% endif %}
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'pacientes:detalle' paciente.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Eliminar Paciente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
