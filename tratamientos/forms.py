@@ -3,11 +3,419 @@ from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTrata
 
 
 class TratamientoEstaticoForm(forms.ModelForm):
+    # Zonas principales
+    ZONA_PRINCIPAL_CHOICES = [
+        ('', 'Seleccionar zona principal...'),
+        ('abdomen', 'ABDOMEN'),
+        ('espalda', 'ESPALDA'),
+        ('pierna', 'PIERNA'),
+    ]
+    
+    zona_principal = forms.ChoiceField(
+        choices=ZONA_PRINCIPAL_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'id': 'zona_principal',
+            'onchange': 'mostrarZonasEspecificas(this.value)'
+        })
+    )
+    
+    # Campos para Abdomen
+    abdomen_alto = forms.DecimalField(
+        label='Abdomen alto (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_alto'
+        })
+    )
+    
+    cintura = forms.DecimalField(
+        label='Cintura (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cintura'
+        })
+    )
+    
+    abdomen_bajo = forms.DecimalField(
+        label='Abdomen bajo (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_bajo'
+        })
+    )
+    
+    # Campos para Espalda
+    espalda_alta = forms.DecimalField(
+        label='Espalda alta (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_alta'
+        })
+    )
+    
+    zona_axilar = forms.DecimalField(
+        label='Zona axilar (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'zona_axilar'
+        })
+    )
+    
+    espalda_baja = forms.DecimalField(
+        label='Espalda baja (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_baja'
+        })
+    )
+    
+    # Campos para Pierna
+    femur_proximal = forms.DecimalField(
+        label='Parte proximal de fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_proximal'
+        })
+    )
+    
+    femur_medial = forms.DecimalField(
+        label='Parte medial fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_medial'
+        })
+    )
+    
+    cadera_distal = forms.DecimalField(
+        label='Parte distal de cadera (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cadera_distal'
+        })
+    )
+    
+    # Campos para Sesión 1
+    abdomen_alto_s1 = forms.DecimalField(
+        label='Abdomen alto (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_alto_s1'
+        })
+    )
+    cintura_s1 = forms.DecimalField(
+        label='Cintura (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cintura_s1'
+        })
+    )
+    abdomen_bajo_s1 = forms.DecimalField(
+        label='Abdomen bajo (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_bajo_s1'
+        })
+    )
+    
+    # Campos para Sesión 3-4
+    abdomen_alto_s34 = forms.DecimalField(
+        label='Abdomen alto (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_alto_s34'
+        })
+    )
+    cintura_s34 = forms.DecimalField(
+        label='Cintura (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cintura_s34'
+        })
+    )
+    abdomen_bajo_s34 = forms.DecimalField(
+        label='Abdomen bajo (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_bajo_s34'
+        })
+    )
+    
+    # Campos para Sesión 6-7
+    abdomen_alto_s67 = forms.DecimalField(
+        label='Abdomen alto (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_alto_s67'
+        })
+    )
+    cintura_s67 = forms.DecimalField(
+        label='Cintura (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cintura_s67'
+        })
+    )
+    abdomen_bajo_s67 = forms.DecimalField(
+        label='Abdomen bajo (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'abdomen_bajo_s67'
+        })
+    )
+    
+    # Campos para Espalda Sesión 1
+    espalda_alta_s1 = forms.DecimalField(
+        label='Espalda alta (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_alta_s1'
+        })
+    )
+    zona_axilar_s1 = forms.DecimalField(
+        label='Zona axilar (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'zona_axilar_s1'
+        })
+    )
+    espalda_baja_s1 = forms.DecimalField(
+        label='Espalda baja (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_baja_s1'
+        })
+    )
+    
+    # Campos para Espalda Sesión 3-4
+    espalda_alta_s34 = forms.DecimalField(
+        label='Espalda alta (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_alta_s34'
+        })
+    )
+    zona_axilar_s34 = forms.DecimalField(
+        label='Zona axilar (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'zona_axilar_s34'
+        })
+    )
+    espalda_baja_s34 = forms.DecimalField(
+        label='Espalda baja (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_baja_s34'
+        })
+    )
+    
+    # Campos para Espalda Sesión 6-7
+    espalda_alta_s67 = forms.DecimalField(
+        label='Espalda alta (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_alta_s67'
+        })
+    )
+    zona_axilar_s67 = forms.DecimalField(
+        label='Zona axilar (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'zona_axilar_s67'
+        })
+    )
+    espalda_baja_s67 = forms.DecimalField(
+        label='Espalda baja (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'espalda_baja_s67'
+        })
+    )
+    
+    # Campos para Pierna Sesión 1
+    femur_proximal_s1 = forms.DecimalField(
+        label='Parte proximal de fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_proximal_s1'
+        })
+    )
+    femur_medial_s1 = forms.DecimalField(
+        label='Parte medial fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_medial_s1'
+        })
+    )
+    cadera_distal_s1 = forms.DecimalField(
+        label='Parte distal de cadera (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cadera_distal_s1'
+        })
+    )
+    
+    # Campos para Pierna Sesión 3-4
+    femur_proximal_s34 = forms.DecimalField(
+        label='Parte proximal de fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_proximal_s34'
+        })
+    )
+    femur_medial_s34 = forms.DecimalField(
+        label='Parte medial fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_medial_s34'
+        })
+    )
+    cadera_distal_s34 = forms.DecimalField(
+        label='Parte distal de cadera (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cadera_distal_s34'
+        })
+    )
+    
+    # Campos para Pierna Sesión 6-7
+    femur_proximal_s67 = forms.DecimalField(
+        label='Parte proximal de fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_proximal_s67'
+        })
+    )
+    femur_medial_s67 = forms.DecimalField(
+        label='Parte medial fémur (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'femur_medial_s67'
+        })
+    )
+    cadera_distal_s67 = forms.DecimalField(
+        label='Parte distal de cadera (cm)',
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.1',
+            'placeholder': 'Medida en cm',
+            'id': 'cadera_distal_s67'
+        })
+    )
+    
     class Meta:
         model = TratamientoEstetico
-        fields = ['paciente', 'historia_clinica', 'fecha_fin_planificada',
-                  'objetivo_principal', 'zona_trabajo', 'tecnicas_descripcion',
-                  'es_tratamiento_facial', 'usa_radiofrecuencia', 'activo']
+        fields = ['paciente', 'historia_clinica',
+                  'zona_trabajo', 'tecnicas_descripcion',
+                  'es_tratamiento_facial', 'activo']
         widgets = {
             'paciente': forms.Select(attrs={
                 'class': 'form-select',
@@ -15,16 +423,6 @@ class TratamientoEstaticoForm(forms.ModelForm):
             }),
             'historia_clinica': forms.Select(attrs={
                 'class': 'form-select',
-                'required': True
-            }),
-            'fecha_fin_planificada': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
-            'objetivo_principal': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 2,
-                'placeholder': 'Objetivo principal del tratamiento',
                 'required': True
             }),
             'zona_trabajo': forms.Textarea(attrs={
@@ -38,9 +436,6 @@ class TratamientoEstaticoForm(forms.ModelForm):
                 'placeholder': 'Descripción de técnicas a usar'
             }),
             'es_tratamiento_facial': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
-            'usa_radiofrecuencia': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
             'activo': forms.CheckboxInput(attrs={

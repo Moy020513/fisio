@@ -137,77 +137,77 @@ class AntecedentePatologico(models.Model):
         ('otro', 'Otro'),
     ]
     
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='antecedentes_patologicos')
-    tipo_antecedente = models.CharField(max_length=20, choices=TIPO_ANTECEDENTE_CHOICES)
-    patologia = models.CharField(max_length=50, choices=TIPO_PATOLOGIA_CHOICES)
-    descripcion = models.TextField(blank=True, null=True)
-    año_diagnostico = models.PositiveIntegerField(blank=True, null=True)
+    paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='antecedentes_patologicos')
+    
+    # Antecedentes generales
+    hipertension = models.BooleanField(default=False)
+    diabetes = models.BooleanField(default=False)
+    cancer = models.BooleanField(default=False)
+    trigliceridos = models.BooleanField(default=False)
+    obesidad = models.BooleanField(default=False)
+    tiroides = models.BooleanField(default=False)
+    
+    # Antecedentes específicos por género (se mostrarán según género)
+    sop = models.BooleanField(default=False)  # SOP en mujeres
+    menopausia = models.BooleanField(default=False)  # Menopausia en mujeres
+    fecha_ultima_menstruacion = models.DateField(blank=True, null=True)  # Mujeres
+    probabilidad_embarazo = models.BooleanField(default=False)  # Mujeres
+    numero_partos = models.PositiveIntegerField(default=0)  # Mujeres
+    
+    # Cirugías
+    cirugias = models.TextField(blank=True, null=True, help_text="Descripción de cirugías realizadas")
+    
+    # Notas adicionales
+    notas = models.TextField(blank=True, null=True)
+    
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name = 'Antecedente Patológico'
         verbose_name_plural = 'Antecedentes Patológicos'
     
     def __str__(self):
-        return f"{self.paciente} - {self.get_patologia_display()}"
-
-
-class AntecedentePatologicoFemenino(models.Model):
-    """Antecedentes específicos de mujeres"""
-    paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='antecedentes_femeninos', 
-                                     limit_choices_to={'genero': 'F'})
-    
-    fecha_ultima_menstruacion = models.DateField(blank=True, null=True)
-    probabilidad_embarazo = models.BooleanField(default=False)
-    numero_partos = models.PositiveIntegerField(default=0)
-    en_menopausia = models.BooleanField(default=False)
-    edad_menopausia = models.PositiveIntegerField(blank=True, null=True)
-    
-    class Meta:
-        verbose_name = 'Antecedente Femenino'
-        verbose_name_plural = 'Antecedentes Femeninos'
-    
-    def __str__(self):
-        return f"Antecedentes femeninos - {self.paciente}"
-
-
-class AntecedenteCirugias(models.Model):
-    """Historial de cirugías"""
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='cirugia')
-    tipo_cirugia = models.CharField(max_length=200)
-    fecha = models.DateField()
-    descripcion = models.TextField(blank=True, null=True)
-    
-    class Meta:
-        verbose_name = 'Cirugía'
-        verbose_name_plural = 'Cirugías'
-    
-    def __str__(self):
-        return f"{self.paciente} - {self.tipo_cirugia}"
+        return f"Antecedentes patológicos - {self.paciente}"
 
 
 class AntecedentesNoPatologicos(models.Model):
     """Antecedentes no patológicos"""
     paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='antecedentes_no_patologicos')
     
+    # Diagnóstico y Pronóstico
+    diagnostico = models.TextField(blank=True, null=True)
+    pronostico = models.TextField(blank=True, null=True)
+    
     # Actividad física
     realiza_actividad_fisica = models.BooleanField(default=False)
     frecuencia_ejercicio = models.CharField(max_length=20, choices=FRECUENCIA_EJERCICIO_CHOICES, blank=True, null=True)
     tipo_ejercicio = models.TextField(blank=True, null=True)
     
-    # Alimentación
+    # Alimentación general
     tipo_alimentacion = models.CharField(max_length=20, choices=TIPO_DIETA_CHOICES, blank=True, null=True)
-    descripcion_alimentacion = models.TextField(blank=True, null=True)
+    regimen_alimenticio = models.TextField(blank=True, null=True)
+    
+    # Detalles nutricionales
+    carnes = models.TextField(blank=True, null=True, help_text="Tipos de carnes consumidas")
+    legumbres = models.TextField(blank=True, null=True, help_text="Legumbres consumidas")
+    hidratos_carbono = models.TextField(blank=True, null=True)
+    lipidos = models.TextField(blank=True, null=True)
+    proteinas = models.TextField(blank=True, null=True)
+    
+    # Dieta con notas
+    dieta = models.TextField(blank=True, null=True)
+    notas_dieta = models.TextField(blank=True, null=True, help_text="Notas adicionales sobre la dieta")
+    
+    # Hidratación
+    hidratacion = models.CharField(max_length=100, blank=True, null=True)
+    litros_agua_diarios = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     
     # Sueño
     horas_sueno = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(24)])
     calidad_sueno = models.CharField(max_length=50, blank=True, null=True)
     
-    # Hidratación
-    litros_agua_diarios = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
-    
     # Suplementación
-    usa_suplementos = models.BooleanField(default=False)
-    suplementos_descripcion = models.TextField(blank=True, null=True)
+    suplementacion = models.TextField(blank=True, null=True)
     
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     
@@ -220,7 +220,7 @@ class AntecedentesNoPatologicos(models.Model):
 
 
 class DatosNutricion(models.Model):
-    """Detalles nutricionales del paciente"""
+    """Detalles nutricionales del paciente - Deprecated: Utilizar antecedentes_no_patologicos en su lugar"""
     paciente = models.OneToOneField(Paciente, on_delete=models.CASCADE, related_name='datos_nutricion')
     
     # Macronutrientes

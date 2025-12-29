@@ -24,6 +24,39 @@
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
+                    {% block extra_js %}
+                    <script>
+                        (function() {
+                            function calcAge(dobStr) {
+                                if (!dobStr) return '';
+                                const dob = new Date(dobStr);
+                                if (isNaN(dob)) return '';
+                                const today = new Date();
+                                let age = today.getFullYear() - dob.getFullYear();
+                                const m = today.getMonth() - dob.getMonth();
+                                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+                                if (age < 0 || age > 120) return '';
+                                return age;
+                            }
+
+                            const dobInput = document.getElementById('id_fecha_nacimiento');
+                            const ageInput = document.getElementById('id_edad');
+                            if (!dobInput || !ageInput) return;
+
+                            const updateAge = () => {
+                                const age = calcAge(dobInput.value);
+                                if (age === '') return; // no actualizar si inválido
+                                ageInput.value = age;
+                            };
+
+                            // Inicializar al cargar si hay valor existente
+                            updateAge();
+                            // Actualizar cuando cambie la fecha
+                            dobInput.addEventListener('change', updateAge);
+                            dobInput.addEventListener('input', updateAge);
+                        })();
+                    </script>
+                    {% endblock %}
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <strong>Error:</strong>
                                 {% for error in form.non_field_errors %}
@@ -105,16 +138,6 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">{{ form.email.label }}</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
                         <!-- Domicilio -->
                         <h6 class="mb-3 mt-4 border-bottom pb-2">
                             <i class="fas fa-map-marker-alt"></i> Domicilio
@@ -145,22 +168,12 @@
                             {% endif %}
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ form.grupo_sanguineo.label }}</label>
-                                {{ form.grupo_sanguineo }}
-                                {% if form.grupo_sanguineo.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.grupo_sanguineo.errors.0 }}</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ form.rh.label }}</label>
-                                {{ form.rh }}
-                                {% if form.rh.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.rh.errors.0 }}</div>
-                                {% endif %}
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.grupo_sanguineo.label }}</label>
+                            {{ form.grupo_sanguineo }}
+                            {% if form.grupo_sanguineo.errors %}
+                                <div class="invalid-feedback d-block">{{ form.grupo_sanguineo.errors.0 }}</div>
+                            {% endif %}
                         </div>
 
                         <div class="mb-3">

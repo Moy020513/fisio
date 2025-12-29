@@ -54,6 +54,7 @@
                                         <th>Tipo</th>
                                         <th>Fecha</th>
                                         <th>Descripción</th>
+                                        <th class="text-end">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,6 +63,14 @@
                                             <td>{{ es.get_tipo_display }}</td>
                                             <td>{{ es.fecha_estudio|date:"d/m/Y" }}</td>
                                             <td>{{ es.descripcion|default:"-"|truncatechars:80 }}</td>
+                                            <td class="text-end">
+                                                <a href="{% url 'historiaclinica:estudio-editar' es.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'historiaclinica:estudio-eliminar' es.pk %}" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este estudio?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -76,24 +85,94 @@
 
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-hand-rock"></i> Escala Daniels (Fuerza Muscular)</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'historiaclinica:daniels-lista' historia.pk %}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list"></i> Ver todas</a>
+                        <a href="{% url 'historiaclinica:daniels-crear' historia.pk %}" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Nueva evaluación</a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if evaluaciones_daniels %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Músculo</th>
+                                        <th>Grado</th>
+                                        <th>Descripción</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for eval in evaluaciones_daniels|slice:':5' %}
+                                        <tr>
+                                            <td><strong>{{ eval.musculo }}</strong></td>
+                                            <td>
+                                                <span class="badge 
+                                                    {% if eval.grado == '0' %}bg-danger
+                                                    {% elif eval.grado == '1' %}bg-warning
+                                                    {% elif eval.grado == '2' %}bg-info
+                                                    {% elif eval.grado == '3' %}bg-primary
+                                                    {% elif eval.grado == '4' %}bg-success
+                                                    {% else %}bg-dark
+                                                    {% endif %}">
+                                                    {{ eval.grado }}
+                                                </span>
+                                            </td>
+                                            <td>{{ eval.get_grado_display }}</td>
+                                            <td class="text-end">
+                                                <a href="{% url 'historiaclinica:daniels-editar' eval.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'historiaclinica:daniels-eliminar' eval.pk %}" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta evaluación?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-3 py-2 text-muted">Mostrando últimas 5 evaluaciones.</div>
+                    {% else %}
+                        <div class="p-3 text-muted">No hay evaluaciones musculares registradas.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-dumbbell"></i> Ejercicios Terapéuticos</h6>
-                    <a href="{% url 'historiaclinica:ejercio-crear' historia.pk %}" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Agregar</a>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'historiaclinica:ejercicios-pdf' historia.pk %}" class="btn btn-sm btn-outline-danger" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </a>
+                        <a href="{% url 'historiaclinica:ejercio-crear' historia.pk %}" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Agregar</a>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     {% if ejercicios %}
                         <ul class="list-group list-group-flush">
                             {% for e in ejercicios %}
                                 <li class="list-group-item">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
                                             <strong>{{ e.nombre_ejercicio }}</strong><br>
                                             <small class="text-muted">Series: {{ e.series }} | Repeticiones: {{ e.repeticiones }} | Frecuencia: {{ e.frecuencia }}</small>
+                                            {% if e.notas %}<div class="text-muted mt-2">{{ e.notas }}</div>{% endif %}
                                         </div>
-                                        <span class="badge {% if e.es_ejercicio_casa %}bg-info{% else %}bg-secondary{% endif %}">
-                                            {% if e.es_ejercicio_casa %}En casa{% else %}En clínica{% endif %}
-                                        </span>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <span class="badge {% if e.es_ejercicio_casa %}bg-info{% else %}bg-secondary{% endif %}">
+                                                {% if e.es_ejercicio_casa %}En casa{% else %}En clínica{% endif %}
+                                            </span>
+                                            <a href="{% url 'historiaclinica:ejercio-editar' e.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'historiaclinica:ejercio-eliminar' e.pk %}" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este ejercicio?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
                                     </div>
-                                    {% if e.notas %}<div class="text-muted mt-2">{{ e.notas }}</div>{% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
@@ -118,6 +197,7 @@
                                         <th>Sesión</th>
                                         <th>EVA</th>
                                         <th>Notas</th>
+                                        <th class="text-end">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -127,6 +207,14 @@
                                             <td>{{ ev.numero_sesion }}</td>
                                             <td>{{ ev.escala_eva_sesion|default:"-" }}</td>
                                             <td>{{ ev.notas_sesion|truncatechars:80 }}</td>
+                                            <td class="text-end">
+                                                <a href="{% url 'historiaclinica:evolucion-editar' ev.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'historiaclinica:evolucion-eliminar' ev.pk %}" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta evolución?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

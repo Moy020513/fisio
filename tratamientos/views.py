@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTratamientoEstetico
+from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTratamientoEstetico, ZonaCorporal
 from tratamientos.forms import TratamientoEstaticoForm, MedidasZonaForm, EvolucionTratamientoEstaticoForm
 from pacientes.models import Paciente
+from datetime import date
 
 
 class TratamientoEstaticoListView(LoginRequiredMixin, ListView):
@@ -36,8 +37,8 @@ class TratamientoEstaticoDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tratamiento = self.get_object()
-        context['medidas'] = tratamiento.medidaszona_set.all()
-        context['evoluciones'] = tratamiento.evoluciontratamientoestetico_set.all()
+        context['zonas'] = tratamiento.zonas_corporales.all()
+        context['evoluciones'] = tratamiento.evoluciones.all()
         return context
 
 
@@ -52,6 +53,94 @@ class TratamientoEstaticoCreateView(LoginRequiredMixin, CreateView):
         context['titulo'] = 'Crear Tratamiento Estético'
         context['accion'] = 'crear'
         return context
+
+    def form_valid(self, form):
+        # Guardar el tratamiento
+        response = super().form_valid(form)
+        tratamiento = self.object
+        
+        # Procesar zonas y medidas
+        zona_principal = self.request.POST.get('zona_principal')
+        
+        if zona_principal == 'abdomen':
+            # Sesión 1
+            self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s1'), 1)
+            # Sesión 3-4
+            self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s34'), 3)
+            # Sesión 6-7
+            self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s67'), 6)
+        elif zona_principal == 'espalda':
+            # Sesión 1
+            self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s1'), 1)
+            # Sesión 3-4
+            self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s34'), 3)
+            # Sesión 6-7
+            self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s67'), 6)
+        elif zona_principal == 'pierna':
+            # Sesión 1
+            self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s1'), 1)
+            self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s1'), 1)
+            # Sesión 3-4
+            self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s34'), 3)
+            self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s34'), 3)
+            # Sesión 6-7
+            self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s67'), 6)
+            self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s67'), 6)
+        
+        return response
+    
+    def _crear_zona_medida(self, tratamiento, zona_key, valor, numero_sesion):
+        """Crear zona corporal y medida para la sesión especificada."""
+        if not valor:
+            return
+        
+        # Mapeo de claves a zona_corporal choices
+        zona_mapping = {
+            'abdomen_alto': 'abdomen_alto',
+            'cintura': 'cintura',
+            'abdomen_bajo': 'abdomen_bajo',
+            'espalda_alta': 'espalda_alta',
+            'zona_axilar': 'zona_axilar',
+            'espalda_baja': 'espalda_baja',
+            'femur_proximal': 'femur_proximal',
+            'femur_medial': 'femur_medial',
+            'cadera_distal': 'cadera_distal',
+        }
+        
+        zona_choice = zona_mapping.get(zona_key)
+        if not zona_choice:
+            return
+        
+        # Crear o obtener la zona corporal
+        zona_corporal, created = ZonaCorporal.objects.get_or_create(
+            tratamiento=tratamiento,
+            zona=zona_choice
+        )
+        
+        # Crear la medida para la sesión especificada
+        MedidasZona.objects.get_or_create(
+            zona_corporal=zona_corporal,
+            numero_sesion=numero_sesion,
+            defaults={
+                'medida_cm': float(valor),
+                'fecha_medicion': date.today(),
+            }
+        )
 
     def get_success_url(self):
         return reverse_lazy('tratamientos:detalle', kwargs={'pk': self.object.pk})

@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Cancelar Cita - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Cancelar Cita{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-times"></i> Confirmar cancelación
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h6 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Atención</h6>
+                        <p class="mb-0">Esta acción cancelará la cita y no se podrá revertir.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Detalles de la cita:</h6>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="30%">Paciente:</th>
+                                <td><strong>{{ object.paciente.nombre_completo }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Terapeuta:</th>
+                                <td>{{ object.terapeuta.nombre_completo|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha y hora:</th>
+                                <td>{{ object.fecha_hora|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Estado actual:</th>
+                                <td><span class="badge bg-warning text-dark">{{ object.get_estado_display }}</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'citas:detalle' object.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Volver sin cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, cancelar la cita
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,6 +3,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 from citas.models import Cita, Terapeuta, CitasProximas
 from citas.forms import CitaForm, TerapeutaForm
 
@@ -23,10 +25,29 @@ class CitaListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        ahora = timezone.now()
+        proxima_semana = ahora + timezone.timedelta(days=7)
+        proximas_qs = Cita.objects.filter(
+            fecha_hora__gte=ahora,
+            fecha_hora__lte=proxima_semana,
+            estado__in=['disponible', 'ocupada']
+        )
         context['total_citas'] = Cita.objects.count()
-        context['citas_proximas'] = CitasProximas.objects.count()
+        context['citas_proximas'] = proximas_qs.count()
         context['estados'] = ['disponible', 'ocupada', 'cancelada', 'completada']
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            tabla_html = render_to_string('citas/partials/_cita_table.html', context=context, request=self.request)
+            paginacion_html = render_to_string('citas/partials/_cita_pagination.html', context=context, request=self.request)
+            return JsonResponse({
+                'tabla': tabla_html,
+                'paginacion': paginacion_html,
+                'total_citas': context['page_obj'].paginator.count,
+                'citas_proximas': context['citas_proximas'],
+            })
+        return super().render_to_response(context, **response_kwargs)
 
 
 class CitasProximasView(LoginRequiredMixin, ListView):
@@ -35,6 +56,15 @@ class CitasProximasView(LoginRequiredMixin, ListView):
     template_name = 'citas/citas_proximas.html'
     context_object_name = 'citas'
     paginate_by = 20
+
+    def get_queryset(self):
+        ahora = timezone.now()
+        proxima_semana = ahora + timezone.timedelta(days=7)
+        return Cita.objects.filter(
+            fecha_hora__gte=ahora,
+            fecha_hora__lte=proxima_semana,
+            estado__in=['disponible', 'ocupada']
+        ).order_by('fecha_hora')
 
 
 class CitaDetailView(LoginRequiredMixin, DetailView):

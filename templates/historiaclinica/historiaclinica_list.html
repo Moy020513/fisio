@@ -60,6 +60,9 @@
                                         <a href="{% url 'historiaclinica:evolucion-crear' historia.pk %}" class="btn btn-sm btn-success" title="Agregar sesión">
                                             <i class="fas fa-plus"></i>
                                         </a>
+                                        <a href="{% url 'historiaclinica:eliminar' historia.pk %}" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta historia clínica?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}

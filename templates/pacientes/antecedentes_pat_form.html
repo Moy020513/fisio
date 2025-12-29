@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Antecedentes Patológicos{% endblock %}
+{% block page_title %}Antecedentes Patológicos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="fas fa-notes-medical"></i> Antecedentes Patológicos</h5>
+                        <small class="text-muted">{{ paciente.nombre_completo }}</small>
+                    </div>
+                    <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Volver al listado
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+
+                        <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-heart"></i> Condiciones generales</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.hipertension }} <label class="form-check-label">{{ form.hipertension.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.diabetes }} <label class="form-check-label">{{ form.diabetes.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.cancer }} <label class="form-check-label">{{ form.cancer.label }}</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.trigliceridos }} <label class="form-check-label">{{ form.trigliceridos.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.obesidad }} <label class="form-check-label">{{ form.obesidad.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.tiroides }} <label class="form-check-label">{{ form.tiroides.label }}</label>
+                            </div>
+                        </div>
+
+                        {% if mostrar_campos_femeninos %}
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-venus"></i> Salud ginecológica</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.sop }} <label class="form-check-label">{{ form.sop.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.menopausia }} <label class="form-check-label">{{ form.menopausia.label }}</label>
+                            </div>
+                            <div class="col-md-4 mb-3 form-check form-switch">
+                                {{ form.probabilidad_embarazo }} <label class="form-check-label">{{ form.probabilidad_embarazo.label }}</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.fecha_ultima_menstruacion.label }}</label>
+                                {{ form.fecha_ultima_menstruacion }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.numero_partos.label }}</label>
+                                {{ form.numero_partos }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-scalpel"></i> Cirugías</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.cirugias.label }}</label>
+                            {{ form.cirugias }}
+                        </div>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-sticky-note"></i> Notas</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.notas.label }}</label>
+                            {{ form.notas }}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

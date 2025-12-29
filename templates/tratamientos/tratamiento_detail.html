@@ -1,0 +1,260 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Detalle Tratamiento - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Detalle del Tratamiento{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'tratamientos:lista' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información General -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Información General
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Paciente</h6>
+                            <p class="mb-0"><strong>{{ tratamiento.paciente.nombre_completo }}</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Fecha de Inicio</h6>
+                            <p class="mb-0">{{ tratamiento.fecha_inicio|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Estado</h6>
+                            <p class="mb-0">
+                                {% if tratamiento.activo %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Es Tratamiento Facial</h6>
+                            <p class="mb-0">
+                                {% if tratamiento.es_tratamiento_facial %}
+                                    <span class="badge bg-info">Sí</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if tratamiento.zona_trabajo %}
+                        <div class="mb-3">
+                            <h6 class="text-muted">Zonas de Trabajo</h6>
+                            <p class="mb-0">{{ tratamiento.zona_trabajo|linebreaks }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if tratamiento.tecnicas_descripcion %}
+                        <div class="mb-3">
+                            <h6 class="text-muted">Descripción de Técnicas</h6>
+                            <p class="mb-0">{{ tratamiento.tecnicas_descripcion|linebreaks }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Zonas Corporales y Medidas -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-ruler-vertical"></i> Medidas por Zona
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if zonas %}
+                        {% for zona in zonas %}
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">
+                                    <strong>{{ zona.get_zona_display }}</strong>
+                                </h6>
+                                {% if zona.medidas.all %}
+                                    <div class="table-responsive">
+                                        <table class="table table-sm mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Sesión</th>
+                                                    <th>Medida (cm)</th>
+                                                    <th>Cambio</th>
+                                                    <th>Fecha</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for medida in zona.medidas.all %}
+                                                    <tr>
+                                                        <td>
+                                                            {% if medida.numero_sesion == 1 %}
+                                                                Sesión 1 (Inicial)
+                                                            {% elif medida.numero_sesion == 3 %}
+                                                                Sesión 3-4
+                                                            {% elif medida.numero_sesion == 6 %}
+                                                                Sesión 6-7
+                                                            {% else %}
+                                                                Sesión {{ medida.numero_sesion }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <strong>{{ medida.medida_cm }}</strong>
+                                                        </td>
+                                                        <td>
+                                                            {% if medida.obtener_cambio %}
+                                                                {% if medida.obtener_cambio < 0 %}
+                                                                    <span class="badge bg-success">
+                                                                        {{ medida.obtener_cambio|floatformat:2 }} cm
+                                                                    </span>
+                                                                {% else %}
+                                                                    <span class="badge bg-warning">
+                                                                        +{{ medida.obtener_cambio|floatformat:2 }} cm
+                                                                    </span>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ medida.fecha_medicion|date:"d/m/Y" }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">Sin medidas registradas</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay zonas corporales registradas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Lateral -->
+        <div class="col-lg-4">
+            <!-- Acciones -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog"></i> Acciones
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-edit"></i> Editar Tratamiento
+                    </a>
+                    <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-plus"></i> Nueva Sesión
+                    </a>
+                </div>
+            </div>
+
+            <!-- Información de Historia Clínica -->
+            {% if tratamiento.historia_clinica %}
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="fas fa-file-medical"></i> Historia Clínica
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'historiaclinica:detalle' tratamiento.historia_clinica.pk %}" class="btn btn-info w-100">
+                            <i class="fas fa-eye"></i> Ver Historia Clínica
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Sesiones Registradas -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Sesiones Registradas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="mb-0 text-center">
+                        <span class="badge bg-info fs-5">
+                            {{ evoluciones.count }}
+                        </span>
+                    </h3>
+                    {% if evoluciones %}
+                        <hr>
+                        <div class="list-group list-group-flush">
+                            {% for evolucion in evoluciones|dictsort:"numero_sesion"|slice:"-5:" %}
+                                <a href="#" class="list-group-item list-group-item-action py-2 px-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>Sesión {{ evolucion.numero_sesion }}</strong>
+                                            <p class="mb-0 small text-muted">
+                                                {{ evolucion.fecha_sesion|date:"d/m/Y" }}
+                                            </p>
+                                        </div>
+                                        <span class="badge bg-secondary">
+                                            {{ evolucion.duracion_minutos }}min
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 8px;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    h6 {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .table-sm th,
+    .table-sm td {
+        padding: 0.5rem;
+    }
+
+    .btn {
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}

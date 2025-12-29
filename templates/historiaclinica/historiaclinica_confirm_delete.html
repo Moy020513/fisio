@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Eliminar Historia Clínica - Fisioterapia Clinic{% endblock %}
+
+{% block page_title %}Eliminar Historia Clínica{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-warning"></i> ¡Atención!
+                        </h6>
+                        <p class="mb-0">
+                            Esta acción eliminará permanentemente la historia clínica y todos sus registros asociados:
+                        </p>
+                        <ul class="mt-2">
+                            <li>Ejercicios terapéuticos ({{ historia.ejercicios_terapeuticos.count }})</li>
+                            <li>Evoluciones/Sesiones ({{ historia.evoluciones.count }})</li>
+                            <li>Estudios clínicos ({{ historia.estudios_clinicos.count }})</li>
+                            <li>Evaluaciones Escala Daniels ({{ historia.escala_daniels.count }})</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Información de la Historia Clínica:</h6>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="30%">Paciente:</th>
+                                <td><strong>{{ historia.paciente.nombre_completo }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Diagnóstico:</th>
+                                <td>{{ historia.diagnostico|default:"Sin diagnóstico" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha de Evaluación:</th>
+                                <td>{{ historia.fecha_evaluacion|date:"d/m/Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total de Sesiones:</th>
+                                <td>{{ historia.evoluciones.count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'historiaclinica:lista' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, Eliminar Historia Clínica
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

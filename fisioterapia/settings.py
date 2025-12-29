@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from decouple import config
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,9 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ampk!(!uu+rv^52hgu5_iem1df9mfbhz^7k--w5d7l!cxxipqt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,142.93.65.133,fisio.tecnoy.me').split(',')
+
+# Permitir CSRF desde el subdominio en producción
+CSRF_TRUSTED_ORIGINS = [
+    'https://fisio.tecnoy.me', 'http://fisio.tecnoy.me'
+]
 
 
 # Application definition
@@ -117,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-es'
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 

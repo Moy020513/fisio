@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import (
     Paciente, EstudiosClinico, AntecedentePatologico,
-    AntecedentePatologicoFemenino, AntecedenteCirugias,
     AntecedentesNoPatologicos, DatosNutricion
 )
 
@@ -11,19 +10,9 @@ class EstudiosClinicoInline(admin.StackedInline):
     extra = 0
 
 
-class AntecedentePatologicoInline(admin.TabularInline):
+class AntecedentePatologicoInline(admin.StackedInline):
     model = AntecedentePatologico
-    extra = 1
-
-
-class AntecedentePatologicoFemeninoInline(admin.StackedInline):
-    model = AntecedentePatologicoFemenino
     extra = 0
-
-
-class AntecedenteCirugiasInline(admin.TabularInline):
-    model = AntecedenteCirugias
-    extra = 1
 
 
 class AntecedentesNoPatologicosInline(admin.StackedInline):
@@ -60,7 +49,6 @@ class PacienteAdmin(admin.ModelAdmin):
     inlines = [
         EstudiosClinicoInline,
         AntecedentePatologicoInline,
-        AntecedenteCirugiasInline,
         AntecedentesNoPatologicosInline,
         DatosNutricionInline,
     ]
@@ -76,22 +64,8 @@ class EstudiosClinicoAdmin(admin.ModelAdmin):
 
 @admin.register(AntecedentePatologico)
 class AntecedentePatologicoAdmin(admin.ModelAdmin):
-    list_display = ('paciente', 'patologia', 'tipo_antecedente', 'año_diagnostico')
-    list_filter = ('patologia', 'tipo_antecedente')
+    list_display = ('paciente',)
     search_fields = ('paciente__nombres', 'paciente__apellidos')
-
-
-@admin.register(AntecedentePatologicoFemenino)
-class AntecedentePatologicoFemeninoAdmin(admin.ModelAdmin):
-    list_display = ('paciente', 'en_menopausia', 'numero_partos')
-    search_fields = ('paciente__nombres', 'paciente__apellidos')
-
-
-@admin.register(AntecedenteCirugias)
-class AntecedenteCirugiasAdmin(admin.ModelAdmin):
-    list_display = ('paciente', 'tipo_cirugia', 'fecha')
-    list_filter = ('fecha',)
-    search_fields = ('paciente__nombres', 'paciente__apellidos', 'tipo_cirugia')
 
 
 @admin.register(AntecedentesNoPatologicos)

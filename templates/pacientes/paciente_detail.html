@@ -40,16 +40,6 @@
                                     <td class="text-muted">Tel. Emergencia:</td>
                                     <td>{{ paciente.telefono_emergencia|default:"-" }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">Email:</td>
-                                    <td>
-                                        {% if paciente.email %}
-                                            <a href="mailto:{{ paciente.email }}">{{ paciente.email }}</a>
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                </tr>
                             </table>
 
                             <h6 class="mb-3 border-bottom pb-2 mt-4">

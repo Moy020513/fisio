@@ -1,11 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Q
-from pacientes.models import Paciente
-from pacientes.forms import PacienteForm, AntecedentesNoPatologicosForm, DatosNutricionForm
+from django.template.loader import render_to_string
+from pacientes.models import Paciente, AntecedentePatologico, AntecedentesNoPatologicos
+from pacientes.forms import (
+    PacienteForm,
+    AntecedentePatologicoForm,
+    AntecedentesNoPatologicosForm,
+    DatosNutricionForm,
+)
 
 
 class PacienteListView(LoginRequiredMixin, ListView):
@@ -43,6 +50,17 @@ class PacienteListView(LoginRequiredMixin, ListView):
         context['tipo_filtro'] = self.request.GET.get('tipo', '')
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            table_html = render_to_string('pacientes/partials/_paciente_table.html', context=context, request=self.request)
+            pagination_html = render_to_string('pacientes/partials/_paciente_pagination.html', context=context, request=self.request)
+            return JsonResponse({
+                'table': table_html,
+                'pagination': pagination_html,
+                'resultados': context['page_obj'].paginator.count,
+            })
+        return super().render_to_response(context, **response_kwargs)
+
 
 class PacienteDetailView(LoginRequiredMixin, DetailView):
     """Detalle completo de un paciente."""
@@ -54,7 +72,7 @@ class PacienteDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paciente = self.get_object()
-        context['antecedentes'] = paciente.antecedentes_patologicos.all()
+        context['antecedentes_pat'] = getattr(paciente, 'antecedentes_patologicos', None)
         context['antecedentes_no_pat'] = getattr(paciente, 'antecedentes_no_patologicos', None)
         context['nutricion'] = getattr(paciente, 'datos_nutricion', None)
         return context
@@ -97,6 +115,56 @@ class PacienteDeleteView(LoginRequiredMixin, DeleteView):
     pk_url_kwarg = 'pk'
 
 
+class AntecedentesPatologicosListView(LoginRequiredMixin, ListView):
+    """Listado de pacientes para gestionar antecedentes patológicos."""
+    model = Paciente
+    template_name = 'pacientes/antecedentes_pat_list.html'
+    context_object_name = 'pacientes'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Paciente.objects.all().order_by('-fecha_registro')
+        busqueda = self.request.GET.get('busqueda')
+        if busqueda:
+            queryset = queryset.filter(
+                Q(nombres__icontains=busqueda)
+                | Q(apellidos__icontains=busqueda)
+                | Q(telefono__icontains=busqueda)
+                | Q(email__icontains=busqueda)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['busqueda'] = self.request.GET.get('busqueda', '')
+        return context
+
+
+class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
+    """Listado de pacientes para gestionar antecedentes no patológicos."""
+    model = Paciente
+    template_name = 'pacientes/antecedentes_no_pat_list.html'
+    context_object_name = 'pacientes'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Paciente.objects.all().order_by('-fecha_registro')
+        busqueda = self.request.GET.get('busqueda')
+        if busqueda:
+            queryset = queryset.filter(
+                Q(nombres__icontains=busqueda)
+                | Q(apellidos__icontains=busqueda)
+                | Q(telefono__icontains=busqueda)
+                | Q(email__icontains=busqueda)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['busqueda'] = self.request.GET.get('busqueda', '')
+        return context
+
+
 class AntecedentesDetailView(LoginRequiredMixin, DetailView):
     """Ver antecedentes no patológicos."""
     model = Paciente
@@ -110,9 +178,33 @@ class AntecedentesDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class AntecedentesPatologicosUpdateView(LoginRequiredMixin, UpdateView):
+    """Crear o actualizar antecedentes patológicos."""
+    model = AntecedentePatologico
+    form_class = AntecedentePatologicoForm
+    template_name = 'pacientes/antecedentes_pat_form.html'
+    pk_url_kwarg = 'pk'
+
+    def get_object(self):
+        paciente = get_object_or_404(Paciente, pk=self.kwargs['pk'])
+        antecedente = getattr(paciente, 'antecedentes_patologicos', None)
+        if not antecedente:
+            antecedente = AntecedentePatologico.objects.create(paciente=paciente)
+        return antecedente
+
+    def get_success_url(self):
+        return reverse_lazy('pacientes:detalle', kwargs={'pk': self.object.paciente.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['paciente'] = self.object.paciente
+        context['mostrar_campos_femeninos'] = self.object.paciente.genero == 'F'
+        return context
+
+
 class AntecedentesUpdateView(LoginRequiredMixin, UpdateView):
     """Actualizar antecedentes no patológicos."""
-    model = Paciente
+    model = AntecedentesNoPatologicos
     form_class = AntecedentesNoPatologicosForm
     template_name = 'pacientes/antecedentes_form.html'
     pk_url_kwarg = 'pk'
@@ -121,7 +213,6 @@ class AntecedentesUpdateView(LoginRequiredMixin, UpdateView):
         paciente = get_object_or_404(Paciente, pk=self.kwargs['pk'])
         antecedentes = getattr(paciente, 'antecedentes_no_patologicos', None)
         if not antecedentes:
-            from pacientes.models import AntecedentesNoPatologicos
             antecedentes = AntecedentesNoPatologicos.objects.create(paciente=paciente)
         return antecedentes
 

@@ -1,8 +1,16 @@
 from django import forms
+from django.utils import timezone
 from citas.models import Cita, Terapeuta
 
 
 class CitaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Mostrar valor existente en formato compatible con datetime-local
+        if self.instance and self.instance.pk and self.instance.fecha_hora:
+            local_dt = timezone.localtime(self.instance.fecha_hora)
+            self.fields['fecha_hora'].initial = local_dt.strftime('%Y-%m-%dT%H:%M')
+
     class Meta:
         model = Cita
         fields = ['paciente', 'terapeuta', 'fecha_hora', 'duracion_minutos',
@@ -15,11 +23,14 @@ class CitaForm(forms.ModelForm):
             'terapeuta': forms.Select(attrs={
                 'class': 'form-select'
             }),
-            'fecha_hora': forms.DateTimeInput(attrs={
-                'class': 'form-control',
-                'type': 'datetime-local',
-                'required': True
-            }),
+            'fecha_hora': forms.DateTimeInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'datetime-local',
+                    'required': True
+                },
+                format='%Y-%m-%dT%H:%M'
+            ),
             'duracion_minutos': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'value': 60,
@@ -53,6 +64,10 @@ class CitaForm(forms.ModelForm):
             'estado': 'Estado',
             'motivo_cita': 'Motivo de la Cita',
             'notas_adicionales': 'Notas Adicionales',
+        }
+
+        input_formats = {
+            'fecha_hora': ['%Y-%m-%dT%H:%M'],
         }
 
 

@@ -11,7 +11,7 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <form method="get" class="form-inline d-flex gap-2">
+                    <form method="get" id="citaFiltros" class="form-inline d-flex gap-2">
                         <select name="estado" class="form-select" style="max-width: 200px;">
                             <option value="">Todos los estados</option>
                             <option value="disponible">Disponible</option>
@@ -19,9 +19,6 @@
                             <option value="completada">Completada</option>
                             <option value="cancelada">Cancelada</option>
                         </select>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Filtrar
-                        </button>
                     </form>
                 </div>
                 <div class="col-md-4 text-end">
@@ -61,102 +58,67 @@
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Lista de Citas</h5>
         </div>
-        <div class="card-body p-0">
-            {% if citas %}
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Paciente</th>
-                                <th>Terapeuta</th>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Estado</th>
-                                <th>Duración</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cita in citas %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ cita.paciente.nombre_completo }}</strong>
-                                    </td>
-                                    <td>{{ cita.terapeuta.nombre_completo|default:"-" }}</td>
-                                    <td>{{ cita.fecha_hora|date:"d/m/Y" }}</td>
-                                    <td>{{ cita.fecha_hora|time:"H:i" }} - {{ cita.get_hora_fin|time:"H:i" }}</td>
-                                    <td>
-                                        {% if cita.estado == 'disponible' %}
-                                            <span class="badge bg-success">Disponible</span>
-                                        {% elif cita.estado == 'ocupada' %}
-                                            <span class="badge bg-primary">Ocupada</span>
-                                        {% elif cita.estado == 'completada' %}
-                                            <span class="badge bg-info">Completada</span>
-                                        {% elif cita.estado == 'cancelada' %}
-                                            <span class="badge bg-danger">Cancelada</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ cita.duracion_minutos }} min</td>
-                                    <td class="text-center">
-                                        <a href="{% url 'citas:detalle' cita.pk %}" class="btn btn-sm btn-info" title="Ver detalle">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-sm btn-primary" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'citas:cancelar' cita.pk %}" class="btn btn-sm btn-warning" title="Cancelar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Paginación -->
-                {% if is_paginated %}
-                    <nav aria-label="Paginación" class="p-3">
-                        <ul class="pagination mb-0">
-                            {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1">Primera</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                        &lsaquo; Anterior
-                                    </a>
-                                </li>
-                            {% endif %}
-
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-                                </span>
-                            </li>
-
-                            {% if page_obj.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                                        Siguiente &rsaquo;
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-                                        Última
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
-            {% else %}
-                <div class="alert alert-info m-3">
-                    <i class="fas fa-info-circle"></i> No hay citas registradas.
-                    <a href="{% url 'citas:crear' %}" class="btn btn-sm btn-primary">Crear nueva cita</a>
-                </div>
-            {% endif %}
+        <div class="card-body p-0" id="tablaCitas">
+            {% include 'citas/partials/_cita_table.html' %}
+        </div>
+        <div id="paginacionCitas">
+            {% include 'citas/partials/_cita_pagination.html' %}
         </div>
     </div>
 </div>
+{% block extra_js %}
+<script>
+    (function() {
+        const form = document.getElementById('citaFiltros');
+        const tabla = document.getElementById('tablaCitas');
+        const paginacion = document.getElementById('paginacionCitas');
+        let timer;
+
+        if (!form || !tabla || !paginacion) return;
+
+        const buildUrl = (urlParams) => {
+            const params = urlParams || new URLSearchParams(new FormData(form));
+            return `${window.location.pathname}?${params.toString()}`;
+        };
+
+        const updateUI = (data) => {
+            if (data.tabla) tabla.innerHTML = data.tabla;
+            if (data.paginacion) paginacion.innerHTML = data.paginacion;
+            attachPagination();
+        };
+
+        const fetchData = (url) => {
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(resp => resp.json())
+                .then(updateUI)
+                .catch(() => {});
+        };
+
+        const onFilterChange = () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fetchData(buildUrl()), 200);
+        };
+
+        const attachPagination = () => {
+            paginacion.querySelectorAll('a.page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = link.getAttribute('href');
+                    if (!url) return;
+                    const params = new URLSearchParams(url.split('?')[1] || '');
+                    // Preserve current filter
+                    const estado = form.querySelector('select[name="estado"]').value;
+                    if (estado) params.set('estado', estado);
+                    fetchData(buildUrl(params));
+                });
+            });
+        };
+
+        const estadoSelect = form.querySelector('select[name="estado"]');
+        if (estadoSelect) estadoSelect.addEventListener('change', onFilterChange);
+
+        attachPagination();
+    })();
+</script>
+{% endblock %}
 {% endblock %}

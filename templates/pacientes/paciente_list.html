@@ -11,9 +11,9 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <form method="get" class="form-inline d-flex gap-2">
+                    <form method="get" id="pacienteFiltros" class="form-inline d-flex gap-2" autocomplete="off">
                         <input type="text" name="busqueda" class="form-control flex-grow-1" 
-                               placeholder="Buscar por nombre, teléfono o email..." value="{{ busqueda }}">
+                               placeholder="Buscar por nombre o teléfono..." value="{{ busqueda }}">
                         <select name="tipo" class="form-select" style="max-width: 200px;">
                             <option value="">Todos los tipos</option>
                             <option value="consulta_unica" {% if tipo_filtro == 'consulta_unica' %}selected{% endif %}>Consulta Única</option>
@@ -21,9 +21,6 @@
                             <option value="estetico" {% if tipo_filtro == 'estetico' %}selected{% endif %}>Estético</option>
                             <option value="estetico_facial" {% if tipo_filtro == 'estetico_facial' %}selected{% endif %}>Estético Facial</option>
                         </select>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> Buscar
-                        </button>
                     </form>
                 </div>
                 <div class="col-md-4 text-end">
@@ -49,7 +46,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Resultados Encontrados</h6>
-                    <h3 class="mb-0">{{ page_obj.paginator.count }}</h3>
+                    <h3 class="mb-0" id="resultadosEncontrados">{{ page_obj.paginator.count }}</h3>
                 </div>
             </div>
         </div>
@@ -60,109 +57,11 @@
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-users"></i> Lista de Pacientes</h5>
         </div>
-        <div class="card-body p-0">
-            {% if pacientes %}
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Tel. Emergencia</th>
-                                <th>Email</th>
-                                <th>Tipo</th>
-                                <th>Edad</th>
-                                <th>Registro</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for paciente in pacientes %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ paciente.nombre_completo }}</strong>
-                                    </td>
-                                    <td>{{ paciente.telefono|default:"-" }}</td>
-                                    <td>{{ paciente.telefono_emergencia|default:"-" }}</td>
-                                    <td>{{ paciente.email|default:"-" }}</td>
-                                    <td>
-                                        {% if paciente.tipo_paciente == 'consulta_unica' %}
-                                            <span class="badge bg-info">Consulta Única</span>
-                                        {% elif paciente.tipo_paciente == 'patologia' %}
-                                            <span class="badge bg-warning">Patología</span>
-                                        {% elif paciente.tipo_paciente == 'estetico' %}
-                                            <span class="badge bg-danger">Estético</span>
-                                        {% elif paciente.tipo_paciente == 'estetico_facial' %}
-                                            <span class="badge bg-secondary">Estético Facial</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ paciente.edad }} años</td>
-                                    <td>
-                                        <small class="text-muted">
-                                            {{ paciente.fecha_registro|date:"d/m/Y" }}
-                                        </small>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{% url 'pacientes:detalle' paciente.pk %}" class="btn btn-sm btn-info" title="Ver detalle">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'pacientes:editar' paciente.pk %}" class="btn btn-sm btn-primary" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'pacientes:eliminar' paciente.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Paginación -->
-                {% if is_paginated %}
-                    <nav aria-label="Paginación" class="p-3">
-                        <ul class="pagination mb-0">
-                            {% if page_obj.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=1{% if busqueda %}&busqueda={{ busqueda }}{% endif %}{% if tipo_filtro %}&tipo={{ tipo_filtro }}{% endif %}">
-                                        Primera
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}{% if tipo_filtro %}&tipo={{ tipo_filtro }}{% endif %}">
-                                        &lsaquo; Anterior
-                                    </a>
-                                </li>
-                            {% endif %}
-
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-                                </span>
-                            </li>
-
-                            {% if page_obj.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}{% if tipo_filtro %}&tipo={{ tipo_filtro }}{% endif %}">
-                                        Siguiente &rsaquo;
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}{% if tipo_filtro %}&tipo={{ tipo_filtro }}{% endif %}">
-                                        Última
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
-            {% else %}
-                <div class="alert alert-info m-3">
-                    <i class="fas fa-info-circle"></i> No se encontraron pacientes.
-                    <a href="{% url 'pacientes:crear' %}" class="btn btn-sm btn-primary">Crear nuevo</a>
-                </div>
-            {% endif %}
+        <div class="card-body p-0" id="tablaPacientes">
+            {% include 'pacientes/partials/_paciente_table.html' %}
+        </div>
+        <div id="paginacionPacientes">
+            {% include 'pacientes/partials/_paciente_pagination.html' %}
         </div>
     </div>
 </div>
@@ -176,4 +75,65 @@
         gap: 5px;
     }
 </style>
+{% block extra_js %}
+<script>
+    (function() {
+        const form = document.getElementById('pacienteFiltros');
+        if (!form) return;
+        const input = form.querySelector('input[name="busqueda"]');
+        const tipo = form.querySelector('select[name="tipo"]');
+        const tabla = document.getElementById('tablaPacientes');
+        const paginacion = document.getElementById('paginacionPacientes');
+        const resultados = document.getElementById('resultadosEncontrados');
+        let timer;
+
+        const buildUrl = () => {
+            const params = new URLSearchParams(new FormData(form));
+            return `${window.location.pathname}?${params.toString()}`;
+        };
+
+        const fetchData = () => {
+            const url = buildUrl();
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(resp => resp.json())
+                .then(data => {
+                    if (tabla && data.table) tabla.innerHTML = data.table;
+                    if (paginacion && data.pagination) paginacion.innerHTML = data.pagination;
+                    if (resultados && typeof data.resultados !== 'undefined') resultados.textContent = data.resultados;
+                    attachPaginationLinks();
+                })
+                .catch(() => {/* silencioso */});
+        };
+
+        const debounceFetch = () => {
+            clearTimeout(timer);
+            timer = setTimeout(fetchData, 250);
+        };
+
+        const attachPaginationLinks = () => {
+            if (!paginacion) return;
+            paginacion.querySelectorAll('a.page-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+                    if (!url) return;
+                    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(resp => resp.json())
+                        .then(data => {
+                            if (tabla && data.table) tabla.innerHTML = data.table;
+                            if (paginacion && data.pagination) paginacion.innerHTML = data.pagination;
+                            if (resultados && typeof data.resultados !== 'undefined') resultados.textContent = data.resultados;
+                            attachPaginationLinks();
+                        })
+                        .catch(() => {/* silencioso */});
+                });
+            });
+        };
+
+        if (input) input.addEventListener('input', debounceFetch);
+        if (tipo) tipo.addEventListener('change', fetchData);
+        attachPaginationLinks();
+    })();
+</script>
+{% endblock %}
 {% endblock %}

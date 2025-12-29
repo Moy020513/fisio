@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+{% block title %}Escala Daniels{% endblock %}
+{% block page_title %}Registrar Escala Daniels{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-hand-rock"></i> Escala Daniels - Evaluación Muscular</h5>
+                    <small class="text-muted">{{ historia.paciente.nombre_completo }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.musculo.label }}</label>
+                            {{ form.musculo }}
+                            {% if form.musculo.errors %}<div class="invalid-feedback d-block">{{ form.musculo.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.grado.label }}</label>
+                            {{ form.grado }}
+                            {% if form.grado.errors %}<div class="invalid-feedback d-block">{{ form.grado.errors.0 }}</div>{% endif %}
+                            <small class="form-text text-muted">
+                                <strong>Escala:</strong><br>
+                                0 = Parálisis | 1 = Contracción visible/palpable | 2 = Movimiento sin gravedad<br>
+                                3 = Movimiento contra gravedad | 4 = Resistencia moderada | 5 = Fuerza normal
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.notas.label }}</label>
+                            {{ form.notas }}
+                            {% if form.notas.errors %}<div class="invalid-feedback d-block">{{ form.notas.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-secondary" href="{% url 'historiaclinica:detalle' historia.pk %}"><i class="fas fa-times"></i> Cancelar</a>
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

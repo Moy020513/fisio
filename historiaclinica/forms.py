@@ -1,5 +1,5 @@
 from django import forms
-from historiaclinica.models import HistoriaClinica, EjercioTerapeutico, EvolucionTratamiento, EstudioClinico
+from historiaclinica.models import HistoriaClinica, EjercioTerapeutico, EvolucionTratamiento, EstudioClinico, EscalaDaniels
 
 
 class HistoriaClinicaForm(forms.ModelForm):
@@ -56,14 +56,11 @@ class HistoriaClinicaForm(forms.ModelForm):
 class EjercioTerapeuticoForm(forms.ModelForm):
     class Meta:
         model = EjercioTerapeutico
-        fields = ['historia', 'nombre_ejercicio', 'descripcion', 'series',
+        exclude = ['historia']
+        fields = ['nombre_ejercicio', 'descripcion', 'series',
                   'repeticiones', 'duracion_segundos', 'frecuencia',
                   'es_ejercicio_casa', 'dias_semana', 'notas']
         widgets = {
-            'historia': forms.Select(attrs={
-                'class': 'form-select',
-                'required': True
-            }),
             'nombre_ejercicio': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nombre del ejercicio',
@@ -110,21 +107,27 @@ class EjercioTerapeuticoForm(forms.ModelForm):
 
 
 class EvolucionTratamientoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and getattr(self.instance, 'fecha_sesion', None):
+            self.fields['fecha_sesion'].initial = self.instance.fecha_sesion.strftime('%Y-%m-%d')
+        self.fields['fecha_sesion'].input_formats = ['%Y-%m-%d']
+
     class Meta:
         model = EvolucionTratamiento
-        fields = ['historia', 'fecha_sesion', 'numero_sesion', 'escala_eva_sesion',
+        exclude = ['historia']
+        fields = ['fecha_sesion', 'numero_sesion', 'escala_eva_sesion',
                   'notas_sesion', 'progreso', 'cambios_detectados',
-                  'notas_arcos_actual', 'recomendaciones']
+                  'recomendaciones']
         widgets = {
-            'historia': forms.Select(attrs={
-                'class': 'form-select',
-                'required': True
-            }),
-            'fecha_sesion': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-                'required': True
-            }),
+            'fecha_sesion': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+                    'required': True
+                },
+                format='%Y-%m-%d'
+            ),
             'numero_sesion': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Número de sesión',
@@ -150,11 +153,6 @@ class EvolucionTratamientoForm(forms.ModelForm):
                 'rows': 2,
                 'placeholder': 'Cambios detectados en esta sesión'
             }),
-            'notas_arcos_actual': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 2,
-                'placeholder': 'Notas de arcos de movimiento actuales'
-            }),
             'recomendaciones': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 2,
@@ -164,6 +162,12 @@ class EvolucionTratamientoForm(forms.ModelForm):
 
 
 class EstudioClinicoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and getattr(self.instance, 'fecha_estudio', None):
+            self.fields['fecha_estudio'].initial = self.instance.fecha_estudio.strftime('%Y-%m-%d')
+        self.fields['fecha_estudio'].input_formats = ['%Y-%m-%d']
+
     class Meta:
         model = EstudioClinico
         # 'historia' se asigna en la vista; no debe estar en el formulario
@@ -173,11 +177,14 @@ class EstudioClinicoForm(forms.ModelForm):
                 'class': 'form-select',
                 'required': True
             }),
-            'fecha_estudio': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date',
-                'required': True
-            }),
+            'fecha_estudio': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+                    'required': True
+                },
+                format='%Y-%m-%d'
+            ),
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 2,
@@ -198,4 +205,32 @@ class EstudioClinicoForm(forms.ModelForm):
             'descripcion': 'Descripción',
             'resultado': 'Resultado',
             'archivo': 'Archivo adjunto',
+        }
+
+
+class EscalaDanielsForm(forms.ModelForm):
+    class Meta:
+        model = EscalaDaniels
+        exclude = ['historia']
+        fields = ['musculo', 'grado', 'notas']
+        widgets = {
+            'musculo': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Deltoides derecho, Bíceps izquierdo',
+                'required': True
+            }),
+            'grado': forms.Select(attrs={
+                'class': 'form-select',
+                'required': True
+            }),
+            'notas': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Observaciones adicionales'
+            }),
+        }
+        labels = {
+            'musculo': 'Músculo evaluado',
+            'grado': 'Grado de fuerza',
+            'notas': 'Notas',
         }

@@ -56,16 +56,8 @@
 
                         <!-- Objetivo y Zonas -->
                         <h6 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="fas fa-target"></i> Objetivos y Zonas
+                            <i class="fas fa-target"></i> Zonas
                         </h6>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.objetivo_principal.label }}</label>
-                            {{ form.objetivo_principal }}
-                            {% if form.objetivo_principal.errors %}
-                                <div class="invalid-feedback d-block">{{ form.objetivo_principal.errors.0 }}</div>
-                            {% endif %}
-                        </div>
 
                         <div class="mb-3">
                             <label class="form-label">{{ form.zona_trabajo.label }}</label>
@@ -73,6 +65,222 @@
                             {% if form.zona_trabajo.errors %}
                                 <div class="invalid-feedback d-block">{{ form.zona_trabajo.errors.0 }}</div>
                             {% endif %}
+                        </div>
+
+                        <!-- Zonas de Medición -->
+                        <div class="mb-3">
+                            <label class="form-label">Zona de Medición</label>
+                            {{ form.zona_principal }}
+                        </div>
+
+                        <!-- ABDOMEN -->
+                        <div id="abdomen-section" style="display: none;">
+                            <h6 class="mb-3 mt-3 ps-3 border-start border-warning border-5">
+                                <i class="fas fa-ruler-vertical"></i> ABDOMEN
+                            </h6>
+                            
+                            <!-- Sesión 1 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 1 (Inicial)
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_alto_s1.label }}</label>
+                                        {{ form.abdomen_alto_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cintura_s1.label }}</label>
+                                        {{ form.cintura_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_bajo_s1.label }}</label>
+                                        {{ form.abdomen_bajo_s1 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 3-4 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 3-4
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_alto_s34.label }}</label>
+                                        {{ form.abdomen_alto_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cintura_s34.label }}</label>
+                                        {{ form.cintura_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_bajo_s34.label }}</label>
+                                        {{ form.abdomen_bajo_s34 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 6-7 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 6-7
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_alto_s67.label }}</label>
+                                        {{ form.abdomen_alto_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cintura_s67.label }}</label>
+                                        {{ form.cintura_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.abdomen_bajo_s67.label }}</label>
+                                        {{ form.abdomen_bajo_s67 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ESPALDA -->
+                        <div id="espalda-section" style="display: none;">
+                            <h6 class="mb-3 mt-3 ps-3 border-start border-info border-5">
+                                <i class="fas fa-ruler-vertical"></i> ESPALDA
+                            </h6>
+                            
+                            <!-- Sesión 1 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 1 (Inicial)
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_alta_s1.label }}</label>
+                                        {{ form.espalda_alta_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.zona_axilar_s1.label }}</label>
+                                        {{ form.zona_axilar_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_baja_s1.label }}</label>
+                                        {{ form.espalda_baja_s1 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 3-4 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 3-4
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_alta_s34.label }}</label>
+                                        {{ form.espalda_alta_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.zona_axilar_s34.label }}</label>
+                                        {{ form.zona_axilar_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_baja_s34.label }}</label>
+                                        {{ form.espalda_baja_s34 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 6-7 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 6-7
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_alta_s67.label }}</label>
+                                        {{ form.espalda_alta_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.zona_axilar_s67.label }}</label>
+                                        {{ form.zona_axilar_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.espalda_baja_s67.label }}</label>
+                                        {{ form.espalda_baja_s67 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PIERNA -->
+                        <div id="pierna-section" style="display: none;">
+                            <h6 class="mb-3 mt-3 ps-3 border-start border-success border-5">
+                                <i class="fas fa-ruler-vertical"></i> PIERNA
+                            </h6>
+                            
+                            <!-- Sesión 1 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 1 (Inicial)
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_proximal_s1.label }}</label>
+                                        {{ form.femur_proximal_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_medial_s1.label }}</label>
+                                        {{ form.femur_medial_s1 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cadera_distal_s1.label }}</label>
+                                        {{ form.cadera_distal_s1 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 3-4 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 3-4
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_proximal_s34.label }}</label>
+                                        {{ form.femur_proximal_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_medial_s34.label }}</label>
+                                        {{ form.femur_medial_s34 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cadera_distal_s34.label }}</label>
+                                        {{ form.cadera_distal_s34 }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sesión 6-7 -->
+                            <div class="mb-4">
+                                <h6 class="mb-3" style="font-size: 0.95rem; color: #555;">
+                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Sesión 6-7
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_proximal_s67.label }}</label>
+                                        {{ form.femur_proximal_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.femur_medial_s67.label }}</label>
+                                        {{ form.femur_medial_s67 }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">{{ form.cadera_distal_s67.label }}</label>
+                                        {{ form.cadera_distal_s67 }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Técnicas -->
@@ -101,30 +309,10 @@
                         </div>
 
                         <div class="form-check mb-3">
-                            {{ form.usa_radiofrecuencia }}
-                            <label class="form-check-label" for="{{ form.usa_radiofrecuencia.id_for_label }}">
-                                {{ form.usa_radiofrecuencia.label }}
-                            </label>
-                        </div>
-
-                        <div class="form-check mb-3">
                             {{ form.activo }}
                             <label class="form-check-label" for="{{ form.activo.id_for_label }}">
                                 {{ form.activo.label }}
                             </label>
-                        </div>
-
-                        <!-- Fechas -->
-                        <h6 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="fas fa-calendar"></i> Fechas
-                        </h6>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.fecha_fin_planificada.label }}</label>
-                            {{ form.fecha_fin_planificada }}
-                            {% if form.fecha_fin_planificada.errors %}
-                                <div class="invalid-feedback d-block">{{ form.fecha_fin_planificada.errors.0 }}</div>
-                            {% endif %}
                         </div>
 
                         <!-- Botones -->
@@ -175,4 +363,22 @@
         margin-top: 0.3125em;
     }
 </style>
+
+<script>
+    function mostrarZonasEspecificas(zona) {
+        // Ocultar todas las secciones
+        document.getElementById('abdomen-section').style.display = 'none';
+        document.getElementById('espalda-section').style.display = 'none';
+        document.getElementById('pierna-section').style.display = 'none';
+        
+        // Mostrar la sección seleccionada
+        if (zona === 'abdomen') {
+            document.getElementById('abdomen-section').style.display = 'block';
+        } else if (zona === 'espalda') {
+            document.getElementById('espalda-section').style.display = 'block';
+        } else if (zona === 'pierna') {
+            document.getElementById('pierna-section').style.display = 'block';
+        }
+    }
+</script>
 {% endblock %}
