@@ -5,15 +5,15 @@
 {% block page_title %}Gestión de Citas{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid p-0">
     <!-- Filtros -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <form method="get" id="citaFiltros" class="form-inline d-flex gap-2">
-                        <select name="estado" class="form-select" style="max-width: 200px;">
-                            <option value="">Todos los estados</option>
+    <div class="card border-0 shadow-sm mb-3 mx-2 mx-md-3">
+        <div class="card-body p-2 p-md-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-8">
+                    <form method="get" id="citaFiltros" class="d-flex gap-2">
+                        <select name="estado" class="form-select form-select-sm flex-grow-1">
+                            <option value="">Todos</option>
                             <option value="disponible">Disponible</option>
                             <option value="ocupada">Ocupada</option>
                             <option value="completada">Completada</option>
@@ -21,42 +21,46 @@
                         </select>
                     </form>
                 </div>
-                <div class="col-md-4 text-end">
-                    <a href="{% url 'citas:crear' %}" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nueva Cita
-                    </a>
-                    <a href="{% url 'citas:proximas' %}" class="btn btn-info">
-                        <i class="fas fa-calendar"></i> Próximas 7 días
-                    </a>
+                <div class="col-12 col-md-4">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <a href="{% url 'citas:crear' %}" class="btn btn-success btn-sm flex-grow-1">
+                            <i class="fas fa-plus"></i> Nueva
+                        </a>
+                        <a href="{% url 'citas:proximas' %}" class="btn btn-info btn-sm flex-grow-1">
+                            <i class="fas fa-calendar"></i> Próximas
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Estadísticas -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
+    <div class="row g-2 mb-3 mx-2 mx-md-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Total de Citas</h6>
-                    <h3 class="mb-0">{{ total_citas }}</h3>
+                <div class="card-body p-2">
+                    <h6 class="text-muted mb-1 small">Total</h6>
+                    <h4 class="mb-0">{{ total_citas }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Citas Próximas</h6>
-                    <h3 class="mb-0">{{ citas_proximas }}</h3>
+                <div class="card-body p-2">
+                    <h6 class="text-muted mb-1 small">Próximas</h6>
+                    <h4 class="mb-0">{{ citas_proximas }}</h4>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Tabla de citas -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Lista de Citas</h5>
+<!-- Tabla de citas FUERA del container-fluid -->
+<div class="tabla-citas-wrapper">
+    <div class="card border-0 shadow-sm tabla-citas-card">
+        <div class="card-header bg-light p-2">
+            <h6 class="mb-0 small"><i class="fas fa-calendar-alt"></i> Lista de Citas</h6>
         </div>
         <div class="card-body p-0" id="tablaCitas">
             {% include 'citas/partials/_cita_table.html' %}
@@ -66,6 +70,120 @@
         </div>
     </div>
 </div>
+
+<style>
+    
+    
+    /* Optimización móvil */
+    @media (max-width: 767px) {
+        body {
+            font-size: 0.875rem;
+            overflow-x: hidden;
+        }
+        /* Wrapper de tabla sin restricciones */
+    .tabla-citas-wrapper {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+        
+        /* Eliminar padding del contenedor principal */
+        .container-fluid {
+            padding: 0 !important;
+        }
+        
+        /* Asegurar que los cards tengan margen pero no padding externo */
+        .card {
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        /* Tabla de citas ocupa todo el ancho */
+        .tabla-citas-card {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+        }
+        
+        .tabla-citas-card .card-header {
+            padding: 0.5rem;
+        }
+        
+        .tabla-citas-card .card-body {
+            padding: 0 !important;
+        }
+        
+        .tabla-citas-card #paginacionCitas {
+            padding: 0.5rem;
+        }
+        
+        .table {
+            font-size: 0.8rem;
+        }
+        
+        .table td, .table th {
+            padding: 0.4rem;
+            white-space: nowrap;
+        }
+        
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-group-sm > .btn {
+            padding: 0.2rem 0.3rem;
+        }
+        
+        /* Hacer la tabla scrolleable horizontalmente */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Ajustar iconos */
+        .fas, .far {
+            font-size: 0.85rem;
+        }
+        
+        h4 {
+            font-size: 1.25rem;
+        }
+        
+        h6 {
+            font-size: 0.75rem;
+        }
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-group-sm {
+        gap: 3px;
+    }
+    
+    /* Mejorar el espaciado en móvil */
+    @media (max-width: 575px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+    }
+</style>
+
 {% block extra_js %}
 <script>
     (function() {

@@ -139,6 +139,17 @@ class AntecedentesPatologicosListView(LoginRequiredMixin, ListView):
         context['busqueda'] = self.request.GET.get('busqueda', '')
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            table_html = render_to_string('pacientes/partials/_antecedentes_pat_table.html', context=context, request=self.request)
+            pagination_html = render_to_string('pacientes/partials/_antecedentes_pat_pagination.html', context=context, request=self.request)
+            return JsonResponse({
+                'tabla': table_html,
+                'paginacion': pagination_html,
+                'total': context['page_obj'].paginator.count,
+            })
+        return super().render_to_response(context, **response_kwargs)
+
 
 class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
     """Listado de pacientes para gestionar antecedentes no patológicos."""
@@ -163,6 +174,17 @@ class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['busqueda'] = self.request.GET.get('busqueda', '')
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            table_html = render_to_string('pacientes/partials/_antecedentes_no_pat_table.html', context=context, request=self.request)
+            pagination_html = render_to_string('pacientes/partials/_antecedentes_no_pat_pagination.html', context=context, request=self.request)
+            return JsonResponse({
+                'tabla': table_html,
+                'paginacion': pagination_html,
+                'total': context['page_obj'].paginator.count,
+            })
+        return super().render_to_response(context, **response_kwargs)
 
 
 class AntecedentesDetailView(LoginRequiredMixin, DetailView):

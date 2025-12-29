@@ -5,27 +5,27 @@
 {% block page_title %}Gestión de Pacientes{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid p-0">
     <!-- Encabezado con búsqueda -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <form method="get" id="pacienteFiltros" class="form-inline d-flex gap-2" autocomplete="off">
-                        <input type="text" name="busqueda" class="form-control flex-grow-1" 
-                               placeholder="Buscar por nombre o teléfono..." value="{{ busqueda }}">
-                        <select name="tipo" class="form-select" style="max-width: 200px;">
-                            <option value="">Todos los tipos</option>
-                            <option value="consulta_unica" {% if tipo_filtro == 'consulta_unica' %}selected{% endif %}>Consulta Única</option>
+    <div class="card border-0 shadow-sm mb-3 mx-2 mx-md-3">
+        <div class="card-body p-2 p-md-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-8">
+                    <form method="get" id="pacienteFiltros" class="d-flex flex-column flex-sm-row gap-2" autocomplete="off">
+                        <input type="text" name="busqueda" class="form-control form-control-sm" 
+                               placeholder="Buscar..." value="{{ busqueda }}">
+                        <select name="tipo" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="consulta_unica" {% if tipo_filtro == 'consulta_unica' %}selected{% endif %}>Consulta</option>
                             <option value="patologia" {% if tipo_filtro == 'patologia' %}selected{% endif %}>Patología</option>
                             <option value="estetico" {% if tipo_filtro == 'estetico' %}selected{% endif %}>Estético</option>
-                            <option value="estetico_facial" {% if tipo_filtro == 'estetico_facial' %}selected{% endif %}>Estético Facial</option>
+                            <option value="estetico_facial" {% if tipo_filtro == 'estetico_facial' %}selected{% endif %}>Est. Facial</option>
                         </select>
                     </form>
                 </div>
-                <div class="col-md-4 text-end">
-                    <a href="{% url 'pacientes:crear' %}" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nuevo Paciente
+                <div class="col-12 col-md-4 text-end">
+                    <a href="{% url 'pacientes:crear' %}" class="btn btn-success btn-sm w-100 w-md-auto">
+                        <i class="fas fa-plus"></i> Nuevo
                     </a>
                 </div>
             </div>
@@ -33,29 +33,31 @@
     </div>
 
     <!-- Estadísticas -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
+    <div class="row g-2 mb-3 mx-2 mx-md-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Total Pacientes</h6>
-                    <h3 class="mb-0">{{ total_pacientes }}</h3>
+                <div class="card-body p-2">
+                    <h6 class="text-muted mb-1 small">Total</h6>
+                    <h4 class="mb-0">{{ total_pacientes }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Resultados Encontrados</h6>
-                    <h3 class="mb-0" id="resultadosEncontrados">{{ page_obj.paginator.count }}</h3>
+                <div class="card-body p-2">
+                    <h6 class="text-muted mb-1 small">Encontrados</h6>
+                    <h4 class="mb-0" id="resultadosEncontrados">{{ page_obj.paginator.count }}</h4>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Tabla de pacientes -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-users"></i> Lista de Pacientes</h5>
+<!-- Tabla de pacientes FUERA del container-fluid -->
+<div class="tabla-pacientes-wrapper">
+    <div class="card border-0 shadow-sm tabla-pacientes-card">
+        <div class="card-header bg-light p-2">
+            <h6 class="mb-0 small"><i class="fas fa-users"></i> Lista de Pacientes</h6>
         </div>
         <div class="card-body p-0" id="tablaPacientes">
             {% include 'pacientes/partials/_paciente_table.html' %}
@@ -67,14 +69,118 @@
 </div>
 
 <style>
+    
+    /* Optimización móvil */
+    @media (max-width: 767px) {
+        body {
+            font-size: 0.875rem;
+            overflow-x: hidden;
+        }
+        /* Wrapper de tabla sin restricciones */
+    .tabla-pacientes-wrapper {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+    
+        
+        /* Eliminar padding del contenedor principal */
+        .container-fluid {
+            padding: 0 !important;
+        }
+        
+        /* Asegurar que los cards tengan margen pero no padding externo */
+        .card {
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        /* Tabla de pacientes ocupa todo el ancho */
+        .tabla-pacientes-card {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+        }
+        
+        .tabla-pacientes-card .card-header {
+            padding: 0.5rem;
+        }
+        
+        .tabla-pacientes-card .card-body {
+            padding: 0 !important;
+        }
+        
+        .tabla-pacientes-card #paginacionPacientes {
+            padding: 0.5rem;
+        }
+        
+        .table {
+            font-size: 0.8rem;
+        }
+        
+        .table td, .table th {
+            padding: 0.4rem;
+            white-space: nowrap;
+        }
+        
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-group-sm > .btn {
+            padding: 0.2rem 0.3rem;
+        }
+        
+        /* Hacer la tabla scrolleable horizontalmente */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Ajustar iconos */
+        .fas, .far {
+            font-size: 0.85rem;
+        }
+        
+        h4 {
+            font-size: 1.25rem;
+        }
+        
+        h6 {
+            font-size: 0.75rem;
+        }
+    }
+    
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
     }
 
     .btn-group-sm {
-        gap: 5px;
+        gap: 3px;
+    }
+    
+    /* Mejorar el espaciado en móvil */
+    @media (max-width: 575px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
     }
 </style>
+
 {% block extra_js %}
 <script>
     (function() {
