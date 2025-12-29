@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Antecedentes No Patológicos{% endblock %}
+{% block page_title %}Antecedentes No Patológicos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Antecedentes No Patológicos</h5>
+                        <small class="text-muted">{{ paciente.nombre_completo }}</small>
+                    </div>
+                    <a href="{% url 'pacientes:antecedentes-no-patologicos-lista' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Volver al listado
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if antecedentes %}
+                        <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-notes-medical"></i> Diagnóstico y pronóstico</h6>
+                        <p><strong>Diagnóstico:</strong> {{ antecedentes.diagnostico|default:"-" }}</p>
+                        <p><strong>Pronóstico:</strong> {{ antecedentes.pronostico|default:"-" }}</p>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-running"></i> Actividad física</h6>
+                        <p><strong>Realiza actividad física:</strong> {% if antecedentes.realiza_actividad_fisica %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p>
+                        <p><strong>Frecuencia:</strong> {{ antecedentes.get_frecuencia_ejercicio_display|default:"-" }}</p>
+                        <p><strong>Tipo de ejercicio:</strong> {{ antecedentes.tipo_ejercicio|default:"-" }}</p>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-apple-alt"></i> Alimentación y dieta</h6>
+                        <p><strong>Tipo de alimentación:</strong> {{ antecedentes.get_tipo_alimentacion_display|default:"-" }}</p>
+                        <p><strong>Régimen alimenticio:</strong> {{ antecedentes.regimen_alimenticio|default:"-" }}</p>
+                        <p><strong>Carnes:</strong> {{ antecedentes.carnes|default:"-" }}</p>
+                        <p><strong>Legumbres:</strong> {{ antecedentes.legumbres|default:"-" }}</p>
+                        <p><strong>Hidratos de carbono:</strong> {{ antecedentes.hidratos_carbono|default:"-" }}</p>
+                        <p><strong>Lípidos:</strong> {{ antecedentes.lipidos|default:"-" }}</p>
+                        <p><strong>Proteínas:</strong> {{ antecedentes.proteinas|default:"-" }}</p>
+                        <p><strong>Dieta:</strong> {{ antecedentes.dieta|default:"-" }}</p>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-tint"></i> Hidratación</h6>
+                        <p><strong>Hidratación:</strong> {{ antecedentes.hidratacion|default:"-" }}</p>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-bed"></i> Sueño</h6>
+                        <p><strong>Horas de sueño:</strong> {{ antecedentes.horas_sueno|default:"-" }}</p>
+                        <p><strong>Calidad del sueño:</strong> {{ antecedentes.calidad_sueno|default:"-" }}</p>
+
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-capsules"></i> Suplementación</h6>
+                        <p><strong>Detalle:</strong> {{ antecedentes.suplementacion|default:"-" }}</p>
+                    {% else %}
+                        <div class="alert alert-info mb-0">No hay antecedentes no patológicos registrados.</div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                    <a href="{% url 'pacientes:antecedentes-no-patologicos-lista' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Volver al listado
+                    </a>
+                    <a href="{% url 'pacientes:antecedentes-no-patologicos-editar' paciente.pk %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

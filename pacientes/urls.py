@@ -17,7 +17,9 @@ urlpatterns = [
 
     # Antecedentes
     path('<int:pk>/antecedentes/patologicos/editar/', views.AntecedentesPatologicosUpdateView.as_view(), name='antecedentes-patologicos-editar'),
+    path('<int:pk>/antecedentes/patologicos/detalle/', views.AntecedentesPatologicosDetailView.as_view(), name='antecedentes-patologicos-detalle'),
     path('<int:pk>/antecedentes/', views.AntecedentesDetailView.as_view(), name='antecedentes'),
+    path('<int:pk>/antecedentes/no-patologicos/detalle/', views.AntecedentesNoPatologicosDetailView.as_view(), name='antecedentes-no-patologicos-detalle'),
     path('<int:pk>/antecedentes/editar/', views.AntecedentesUpdateView.as_view(), name='antecedentes-editar'),
     path('<int:pk>/antecedentes/no-patologicos/editar/', views.AntecedentesUpdateView.as_view(), name='antecedentes-no-patologicos-editar'),
 

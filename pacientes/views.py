@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -187,10 +188,39 @@ class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
         return super().render_to_response(context, **response_kwargs)
 
 
+class AntecedentesPatologicosDetailView(LoginRequiredMixin, DetailView):
+    """Ver antecedentes patológicos de un paciente."""
+    model = Paciente
+    template_name = 'pacientes/antecedentes_pat_detail.html'
+    context_object_name = 'paciente'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente = self.get_object()
+        context['antecedentes_pat'] = getattr(paciente, 'antecedentes_patologicos', None)
+        context['mostrar_campos_femeninos'] = paciente.genero == 'F'
+        return context
+
+
 class AntecedentesDetailView(LoginRequiredMixin, DetailView):
     """Ver antecedentes no patológicos."""
     model = Paciente
     template_name = 'pacientes/antecedentes_detail.html'
+    context_object_name = 'paciente'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paciente = self.get_object()
+        context['antecedentes'] = getattr(paciente, 'antecedentes_no_patologicos', None)
+        context['antecedentes_pat'] = getattr(paciente, 'antecedentes_patologicos', None)
+        context['mostrar_campos_femeninos'] = paciente.genero == 'F'
+        return context
+
+
+class AntecedentesNoPatologicosDetailView(LoginRequiredMixin, DetailView):
+    """Ver antecedentes no patológicos de un paciente."""
+    model = Paciente
+    template_name = 'pacientes/antecedentes_no_pat_detail.html'
     context_object_name = 'paciente'
 
     def get_context_data(self, **kwargs):
@@ -215,7 +245,12 @@ class AntecedentesPatologicosUpdateView(LoginRequiredMixin, UpdateView):
         return antecedente
 
     def get_success_url(self):
-        return reverse_lazy('pacientes:detalle', kwargs={'pk': self.object.paciente.pk})
+        return reverse_lazy('pacientes:antecedentes-patologicos-lista')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Antecedentes patológicos guardados correctamente.')
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

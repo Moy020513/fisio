@@ -164,6 +164,28 @@ class AntecedentePatologicoForm(forms.ModelForm):
         # Asegurar formato de entrada
         self.fields['fecha_ultima_menstruacion'].input_formats = ['%Y-%m-%d']
 
+        # Campos exclusivos para pacientes femeninas: al ser Masculino se marcan como no requeridos
+        femeninos = [
+            'sop',
+            'menopausia',
+            'probabilidad_embarazo',
+            'fecha_ultima_menstruacion',
+            'numero_partos',
+        ]
+        if self.instance and self.instance.pk:
+            es_femenino = getattr(self.instance.paciente, 'genero', None) == 'F'
+            for campo in femeninos:
+                self.fields[campo].required = False
+            if not es_femenino:
+                # Para hombres, limpiar valores sensibles en la instancia visual
+                self.initial.update({
+                    'sop': False,
+                    'menopausia': False,
+                    'probabilidad_embarazo': False,
+                    'fecha_ultima_menstruacion': None,
+                    'numero_partos': 0,
+                })
+
     class Meta:
         model = AntecedentePatologico
         fields = ['hipertension', 'diabetes', 'cancer', 'trigliceridos', 'obesidad', 'tiroides',
@@ -217,14 +239,30 @@ class AntecedentePatologicoForm(forms.ModelForm):
             'notas': 'Notas adicionales',
         }
 
+    def clean(self):
+        cleaned = super().clean()
+        # Si el paciente no es femenino, limpiar todos los campos ginecológicos
+        paciente = getattr(self.instance, 'paciente', None)
+        es_femenino = paciente and paciente.genero == 'F'
+        if not es_femenino:
+            cleaned['sop'] = False
+            cleaned['menopausia'] = False
+            cleaned['probabilidad_embarazo'] = False
+            cleaned['fecha_ultima_menstruacion'] = None
+            cleaned['numero_partos'] = cleaned.get('numero_partos') or 0
+        else:
+            # Normalizar número de partos a 0 si viene vacío
+            cleaned['numero_partos'] = cleaned.get('numero_partos') or 0
+        return cleaned
+
 
 class AntecedentesNoPatologicosForm(forms.ModelForm):
     class Meta:
         model = AntecedentesNoPatologicos
         fields = ['diagnostico', 'pronostico', 'realiza_actividad_fisica', 'frecuencia_ejercicio', 
-                  'tipo_ejercicio', 'tipo_alimentacion', 'regimen_alimenticio', 'carnes', 'legumbres',
-                  'hidratos_carbono', 'lipidos', 'proteinas', 'dieta', 'notas_dieta', 'hidratacion',
-                  'litros_agua_diarios', 'horas_sueno', 'calidad_sueno', 'suplementacion']
+              'tipo_ejercicio', 'tipo_alimentacion', 'regimen_alimenticio', 'carnes', 'legumbres',
+                  'hidratos_carbono', 'lipidos', 'proteinas', 'dieta', 'hidratacion',
+                  'horas_sueno', 'calidad_sueno', 'suplementacion']
         widgets = {
             'diagnostico': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -279,19 +317,9 @@ class AntecedentesNoPatologicosForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': 'Descripción de la dieta'
             }),
-            'notas_dieta': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 2,
-                'placeholder': 'Notas adicionales sobre la dieta'
-            }),
             'hidratacion': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Ej: 2-3 litros diarios'
-            }),
-            'litros_agua_diarios': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': 0.1,
-                'placeholder': 'Litros de agua'
             }),
             'horas_sueno': forms.NumberInput(attrs={
                 'class': 'form-control',
