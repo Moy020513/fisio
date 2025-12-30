@@ -5,146 +5,284 @@
 {% block page_title %}Detalle del Paciente{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row mb-4">
+<div class="container-fluid p-0">
+    <div class="row g-0">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="mb-1">
-                            <i class="fas fa-user-circle"></i> {{ paciente.nombre_completo }}
-                        </h5>
-                        <small class="text-muted">
-                            Edad: {{ paciente.edad }} años |
-                            Género: {{ paciente.get_genero_display|default:"-" }}
-                        </small>
-                    </div>
-                    <div>
-                        <span class="badge bg-primary">{{ paciente.get_tipo_paciente_display }}</span>
-                        <span class="badge bg-info">Activo</span>
+            <!-- Información del Paciente -->
+            <div class="card border-0 shadow-sm mb-3 mx-2 mx-lg-3 card-paciente">
+                <div class="card-header bg-light p-2 p-md-3">
+                    <div class="d-flex justify-content-between align-items-start flex-column flex-sm-row gap-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                <i class="fas fa-user-circle"></i> {{ paciente.nombre_completo }}
+                            </h6>
+                            <small class="text-muted d-block">
+                                {{ paciente.edad }} años | {{ paciente.get_genero_display|default:"-" }}
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-primary small">{{ paciente.get_tipo_paciente_display }}</span>
+                            <span class="badge bg-info small">Activo</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="mb-3 border-bottom pb-2">
+                <div class="card-body p-2 p-md-3">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <h6 class="mb-2 border-bottom pb-2 small">
                                 <i class="fas fa-phone"></i> Contacto
                             </h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="text-muted">Teléfono:</td>
-                                    <td><strong>{{ paciente.telefono|default:"-" }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Tel. Emergencia:</td>
-                                    <td>{{ paciente.telefono_emergencia|default:"-" }}</td>
-                                </tr>
-                            </table>
+                            <div class="info-row">
+                                <span class="info-label">Teléfono:</span>
+                                <span class="info-valor">{{ paciente.telefono|default:"-" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tel. Emergencia:</span>
+                                <span class="info-valor">{{ paciente.telefono_emergencia|default:"-" }}</span>
+                            </div>
 
-                            <h6 class="mb-3 border-bottom pb-2 mt-4">
+                            <h6 class="mb-2 border-bottom pb-2 mt-3 small">
                                 <i class="fas fa-map-marker-alt"></i> Domicilio
                             </h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="text-muted">Dirección:</td>
-                                    <td><strong>{{ paciente.domicilio|default:"-" }}</strong></td>
-                                </tr>
-                            </table>
+                            <div class="info-row">
+                                <span class="info-label">Dirección:</span>
+                                <span class="info-valor">{{ paciente.domicilio|default:"-" }}</span>
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <h6 class="mb-3 border-bottom pb-2">
+                        <div class="col-12 col-md-6">
+                            <h6 class="mb-2 border-bottom pb-2 small">
                                 <i class="fas fa-clipboard"></i> Información Médica
                             </h6>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="text-muted">Tipo de Paciente:</td>
-                                    <td><strong>{{ paciente.get_tipo_paciente_display }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Fecha de Nacimiento:</td>
-                                    <td>{{ paciente.fecha_nacimiento|date:"d/m/Y"|default:"-" }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Fecha de Registro:</td>
-                                    <td>{{ paciente.fecha_registro|date:"d/m/Y H:i" }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Última Actualización:</td>
-                                    <td>{{ paciente.ultima_actualizacion|date:"d/m/Y H:i" }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Alergias:</td>
-                                    <td>{{ paciente.alergias|default:"-" }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Religión:</td>
-                                    <td>{{ paciente.religion|default:"-" }}</td>
-                                </tr>
-                            </table>
+                            <div class="info-row">
+                                <span class="info-label">Tipo de Paciente:</span>
+                                <span class="info-valor">{{ paciente.get_tipo_paciente_display }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Fecha de Nacimiento:</span>
+                                <span class="info-valor">{{ paciente.fecha_nacimiento|date:"d/m/Y"|default:"-" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Fecha de Registro:</span>
+                                <span class="info-valor">{{ paciente.fecha_registro|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Última Actualización:</span>
+                                <span class="info-valor">{{ paciente.ultima_actualizacion|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Alergias:</span>
+                                <span class="info-valor">{{ paciente.alergias|default:"-" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Religión:</span>
+                                <span class="info-valor">{{ paciente.religion|default:"-" }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-footer bg-light">
-                    <div class="d-flex gap-2 justify-content-between">
+                <div class="card-footer bg-light p-2">
+                    <div class="d-flex gap-2 justify-content-between flex-column flex-sm-row">
                         <a href="{% url 'pacientes:lista' %}" class="btn btn-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Volver
                         </a>
-                        <div>
-                            <a href="{% url 'pacientes:antecedentes' paciente.pk %}" class="btn btn-info btn-sm">
-                                <i class="fas fa-history"></i> Antecedentes
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{% url 'pacientes:antecedentes' paciente.pk %}" class="btn btn-info btn-sm flex-grow-1 flex-sm-grow-0">
+                                <i class="fas fa-history"></i> <span class="d-none d-sm-inline">Antecedentes</span>
                             </a>
-                            <a href="{% url 'pacientes:editar' paciente.pk %}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Editar
+                            <a href="{% url 'pacientes:editar' paciente.pk %}" class="btn btn-primary btn-sm flex-grow-1 flex-sm-grow-0">
+                                <i class="fas fa-edit"></i> <span class="d-none d-sm-inline">Editar</span>
                             </a>
-                            <a href="{% url 'pacientes:eliminar' paciente.pk %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> Eliminar
+                            <a href="{% url 'pacientes:eliminar' paciente.pk %}" class="btn btn-danger btn-sm flex-grow-1 flex-sm-grow-0">
+                                <i class="fas fa-trash"></i> <span class="d-none d-sm-inline">Eliminar</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Historias Clínicas -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-file-medical"></i> Historias Clínicas
-                    </h5>
-                    <a href="{% url 'historiaclinica:crear' paciente.pk %}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Nueva Historia
-                    </a>
-                </div>
-                <div class="card-body">
-                    {% if paciente.historias_clinicas.all %}
-                        <div class="list-group">
-                            {% for historia in paciente.historias_clinicas.all %}
-                                <a href="{% url 'historiaclinica:detalle' historia.pk %}" class="list-group-item list-group-item-action">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="mb-1">{{ historia.diagnostico|default:"Sin diagnóstico" }}</h6>
-                                            <small class="text-muted">
-                                                Evaluación: {{ historia.fecha_evaluacion|date:"d/m/Y" }} |
-                                                EVA: {{ historia.escala_eva|default:"-" }}
-                                            </small>
-                                        </div>
-                                        <span class="badge bg-success">{{ historia.evoluciones.count }} sesiones</span>
-                                    </div>
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p class="text-muted text-center mb-0">No hay historias clínicas registradas</p>
-                    {% endif %}
+            <!-- Header Historias Clínicas -->
+            <div class="card border-0 shadow-sm mb-3 mx-2 mx-lg-3">
+                <div class="card-header bg-light p-2">
+                    <div class="d-flex justify-content-between align-items-center flex-column flex-sm-row gap-2">
+                        <h6 class="mb-0">
+                            <i class="fas fa-file-medical"></i> Historias Clínicas
+                        </h6>
+                        <a href="{% url 'historiaclinica:crear' paciente.pk %}" class="btn btn-sm btn-primary w-100 w-sm-auto">
+                            <i class="fas fa-plus"></i> Nueva Historia
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Lista de Historias Clínicas -->
+<div class="historias-wrapper">
+    <div class="card border-0 shadow-sm historias-card">
+        <div class="card-body p-0">
+            {% if paciente.historias_clinicas.all %}
+                <div class="list-group list-group-flush">
+                    {% for historia in paciente.historias_clinicas.all %}
+                        <a href="{% url 'historiaclinica:detalle' historia.pk %}" class="list-group-item list-group-item-action p-2 p-md-3">
+                            <div class="d-flex justify-content-between align-items-start flex-column flex-sm-row gap-2">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small">{{ historia.diagnostico|default:"Sin diagnóstico" }}</h6>
+                                    <small class="text-muted d-block">
+                                        Evaluación: {{ historia.fecha_evaluacion|date:"d/m/Y" }}
+                                    </small>
+                                    <small class="text-muted">
+                                        EVA: {{ historia.escala_eva|default:"-" }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-success align-self-end align-self-sm-start">
+                                    {{ historia.evoluciones.count }} sesiones
+                                </span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted text-center p-4 mb-0 small">No hay historias clínicas registradas</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Wrapper para historias clínicas */
+    .historias-wrapper {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+    
+    /* En desktop, restaurar el ancho normal */
+    @media (min-width: 992px) {
+        .historias-wrapper {
+            width: auto;
+            position: static;
+            left: auto;
+            right: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+        }
+        
+        .historias-wrapper .historias-card {
+            max-width: 100%;
+            margin: 0 auto !important;
+        }
+    }
+    
+    /* Optimización móvil */
+    @media (max-width: 767px) {
+        body {
+            font-size: 0.875rem;
+            overflow-x: hidden;
+        }
+        
+        .container-fluid {
+            padding: 0 !important;
+        }
+        
+        .card-paciente {
+            font-size: 0.85rem;
+        }
+        
+        /* Historias ocupa todo el ancho en móvil */
+        .historias-card {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+        }
+        
+        h6 {
+            font-size: 0.875rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.5em;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .fas, .far {
+            font-size: 0.85rem;
+        }
+    }
+    
+    /* Estilo para las filas de información */
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 1rem;
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .info-valor {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #2c3e50;
+        text-align: right;
+        word-break: break-word;
+    }
+    
+    @media (max-width: 575px) {
+        .info-row {
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.4rem 0;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+        }
+        
+        .info-valor {
+            font-size: 0.8rem;
+            text-align: left;
+        }
+        
+        .card-body {
+            padding: 0.75rem !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+    }
+    
+    /* Mejorar hover en las historias */
+    .list-group-item-action:hover {
+        background-color: #f8f9fa;
+    }
+</style>
 {% endblock %}
