@@ -28,7 +28,7 @@ class CitaListView(LoginRequiredMixin, ListView):
         ahora = timezone.now()
         proxima_semana = ahora + timezone.timedelta(days=7)
         proximas_qs = Cita.objects.filter(
-            fecha_hora__gte=ahora,
+            fecha_hora__gt=ahora,
             fecha_hora__lte=proxima_semana,
             estado__in=['disponible', 'ocupada']
         )
@@ -61,7 +61,7 @@ class CitasProximasView(LoginRequiredMixin, ListView):
         ahora = timezone.now()
         proxima_semana = ahora + timezone.timedelta(days=7)
         return Cita.objects.filter(
-            fecha_hora__gte=ahora,
+            fecha_hora__gt=ahora,
             fecha_hora__lte=proxima_semana,
             estado__in=['disponible', 'ocupada']
         ).order_by('fecha_hora')

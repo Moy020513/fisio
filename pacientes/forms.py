@@ -11,6 +11,9 @@ class PacienteForm(forms.ModelForm):
             self.fields['fecha_nacimiento'].initial = self.instance.fecha_nacimiento.strftime('%Y-%m-%d')
         # Asegurar formatos de entrada válidos
         self.fields['fecha_nacimiento'].input_formats = ['%Y-%m-%d']
+        # Remover readonly de edad para permitir entrada manual
+        if 'edad' in self.fields:
+            self.fields['edad'].widget.attrs.pop('readonly', None)
 
     class Meta:
         model = Paciente
@@ -32,8 +35,7 @@ class PacienteForm(forms.ModelForm):
             'fecha_nacimiento': forms.DateInput(
                 attrs={
                     'class': 'form-control',
-                    'type': 'date',
-                    'required': True
+                    'type': 'date'
                 },
                 format='%Y-%m-%d'
             ),
@@ -41,19 +43,18 @@ class PacienteForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Edad',
                 'min': 1,
-                'max': 120,
-                'readonly': 'readonly'
+                'max': 120
             }),
             'genero': forms.Select(attrs={
                 'class': 'form-select',
                 'required': True
             }),
-            'telefono': forms.TextInput(attrs={
+            'telefono': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '3105551234',
                 'required': True
             }),
-            'telefono_emergencia': forms.TextInput(attrs={
+            'telefono_emergencia': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '3105551234'
             }),
@@ -101,15 +102,17 @@ class PacienteForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
+        # Validar edad manualmente ingresada
+        edad = cleaned.get('edad')
+        if edad is not None and (edad < 0 or edad > 120):
+            self.add_error('edad', 'La edad debe estar entre 0 y 120 años.')
+        # Opcional: validar fecha de nacimiento si se proporciona
         dob = cleaned.get('fecha_nacimiento')
         if dob:
             today = date.today()
-            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-            # Validación de rango razonable
-            if age < 0 or age > 120:
+            calc_age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if calc_age < 0 or calc_age > 120:
                 self.add_error('fecha_nacimiento', 'Fecha de nacimiento inválida.')
-            else:
-                cleaned['edad'] = age
         return cleaned
 
 

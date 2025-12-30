@@ -5,81 +5,341 @@
 {% block page_title %}Antecedentes{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-history"></i> {{ paciente.nombre_completo }}</h5>
-                    <a href="{% url 'pacientes:antecedentes-editar' paciente.pk %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <div class="col-lg-8 offset-lg-1">
+            <!-- Header del Paciente -->
+            <div class="card border-0 shadow-sm mb-3 mx-2 mx-lg-0">
+                <div class="card-header bg-gradient-primary text-white p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1 fw-bold"><i class="fas fa-user-circle"></i> {{ paciente.nombre_completo }}</h5>
+                            <small class="opacity-75">Historial Médico Completo</small>
+                        </div>
+                        <a href="{% url 'pacientes:antecedentes-editar' paciente.pk %}" class="btn btn-light btn-sm">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                    </div>
                 </div>
-                <div class="card-body">
+                
+                <div class="card-body p-4">
                     {% if antecedentes_pat or antecedentes %}
+                        
                         {% if antecedentes_pat %}
-                        <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-heart"></i> Antecedentes patológicos</h6>
-                        <div class="row">
-                            <div class="col-md-4"><p><strong>Hipertensión:</strong> {% if antecedentes_pat.hipertension %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Diabetes:</strong> {% if antecedentes_pat.diabetes %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Cáncer:</strong> {% if antecedentes_pat.cancer %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Triglicéridos:</strong> {% if antecedentes_pat.trigliceridos %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Obesidad:</strong> {% if antecedentes_pat.obesidad %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Tiroides:</strong> {% if antecedentes_pat.tiroides %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
+                        <!-- Antecedentes Patológicos -->
+                        <div class="seccion-antecedentes mb-4">
+                            <div class="seccion-header">
+                                <i class="fas fa-heartbeat text-danger"></i>
+                                <h6 class="seccion-title">Antecedentes Patológicos</h6>
+                            </div>
+                            
+                            <!-- Grid de condiciones -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Hipertensión</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.hipertension %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.hipertension %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Diabetes</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.diabetes %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.diabetes %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Cáncer</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.cancer %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.cancer %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Triglicéridos</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.trigliceridos %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.trigliceridos %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Obesidad</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.obesidad %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.obesidad %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="condicion-card">
+                                        <div class="condicion-label">Tiroides</div>
+                                        <div class="condicion-valor {% if antecedentes_pat.tiroides %}valor-si{% else %}valor-no{% endif %}">
+                                            {% if antecedentes_pat.tiroides %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if mostrar_campos_femeninos %}
+                            <!-- Antecedentes Femeninos -->
+                            <div class="antecedentes-femeninos mt-4 p-3">
+                                <h6 class="text-muted mb-3"><i class="fas fa-venus"></i> Antecedentes Ginecológicos</h6>
+                                <div class="row g-3">
+                                    <div class="col-6 col-md-4">
+                                        <div class="condicion-card">
+                                            <div class="condicion-label">SOP</div>
+                                            <div class="condicion-valor {% if antecedentes_pat.sop %}valor-si{% else %}valor-no{% endif %}">
+                                                {% if antecedentes_pat.sop %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="condicion-card">
+                                            <div class="condicion-label">Menopausia</div>
+                                            <div class="condicion-valor {% if antecedentes_pat.menopausia %}valor-si{% else %}valor-no{% endif %}">
+                                                {% if antecedentes_pat.menopausia %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="condicion-card">
+                                            <div class="condicion-label">Prob. Embarazo</div>
+                                            <div class="condicion-valor {% if antecedentes_pat.probabilidad_embarazo %}valor-si{% else %}valor-no{% endif %}">
+                                                {% if antecedentes_pat.probabilidad_embarazo %}<i class="fas fa-check-circle"></i> Sí{% else %}<i class="fas fa-times-circle"></i> No{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-6">
+                                        <div class="info-box">
+                                            <i class="fas fa-calendar-alt text-primary"></i>
+                                            <div>
+                                                <div class="info-label">Última Menstruación</div>
+                                                <div class="info-valor">{{ antecedentes_pat.fecha_ultima_menstruacion|date:"d/m/Y"|default:"-" }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-6">
+                                        <div class="info-box">
+                                            <i class="fas fa-baby text-primary"></i>
+                                            <div>
+                                                <div class="info-label">Número de Partos</div>
+                                                <div class="info-valor">{{ antecedentes_pat.numero_partos|default:"0" }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Cirugías y Notas -->
+                            <div class="mt-4">
+                                <div class="nota-box mb-3">
+                                    <div class="nota-header">
+                                        <i class="fas fa-cut"></i> Cirugías
+                                    </div>
+                                    <div class="nota-contenido">
+                                        {{ antecedentes_pat.cirugias|default:"Ninguna registrada"|linebreaks }}
+                                    </div>
+                                </div>
+                                <div class="nota-box">
+                                    <div class="nota-header">
+                                        <i class="fas fa-sticky-note"></i> Notas Adicionales
+                                    </div>
+                                    <div class="nota-contenido">
+                                        {{ antecedentes_pat.notas|default:"Sin notas adicionales"|linebreaks }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        {% if mostrar_campos_femeninos %}
-                        <div class="row mt-3">
-                            <div class="col-md-4"><p><strong>SOP:</strong> {% if antecedentes_pat.sop %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Menopausia:</strong> {% if antecedentes_pat.menopausia %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Probabilidad de embarazo:</strong> {% if antecedentes_pat.probabilidad_embarazo %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-6"><p><strong>Fecha última menstruación:</strong> {{ antecedentes_pat.fecha_ultima_menstruacion|date:"d/m/Y"|default:"-" }}</p></div>
-                            <div class="col-md-6"><p><strong>Número de partos:</strong> {{ antecedentes_pat.numero_partos|default:"0" }}</p></div>
-                        </div>
-                        {% endif %}
-                        <p class="mt-3"><strong>Cirugías:</strong> {{ antecedentes_pat.cirugias|default:"-" }}</p>
-                        <p><strong>Notas:</strong> {{ antecedentes_pat.notas|default:"-" }}</p>
                         {% endif %}
 
                         {% if antecedentes %}
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-notes-medical"></i> Antecedentes no patológicos</h6>
-                        <p><strong>Diagnóstico:</strong> {{ antecedentes.diagnostico|default:"-" }}</p>
-                        <p><strong>Pronóstico:</strong> {{ antecedentes.pronostico|default:"-" }}</p>
+                        <!-- Antecedentes No Patológicos -->
+                        <div class="seccion-antecedentes mb-4">
+                            <div class="seccion-header">
+                                <i class="fas fa-heart text-success"></i>
+                                <h6 class="seccion-title">Antecedentes No Patológicos</h6>
+                            </div>
 
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-running"></i> Actividad física</h6>
-                        <p><strong>Realiza actividad física:</strong> {% if antecedentes.realiza_actividad_fisica %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p>
-                        <p><strong>Frecuencia:</strong> {{ antecedentes.get_frecuencia_ejercicio_display|default:"-" }}</p>
-                        <p><strong>Tipo de ejercicio:</strong> {{ antecedentes.tipo_ejercicio|default:"-" }}</p>
+                            <!-- Diagnóstico y Pronóstico -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-card-header">
+                                            <i class="fas fa-stethoscope"></i> Diagnóstico
+                                        </div>
+                                        <div class="info-card-body">
+                                            {{ antecedentes.diagnostico|default:"No especificado" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-card">
+                                        <div class="info-card-header">
+                                            <i class="fas fa-chart-line"></i> Pronóstico
+                                        </div>
+                                        <div class="info-card-body">
+                                            {{ antecedentes.pronostico|default:"No especificado" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-apple-alt"></i> Alimentación y dieta</h6>
-                        <p><strong>Tipo de alimentación:</strong> {{ antecedentes.get_tipo_alimentacion_display|default:"-" }}</p>
-                        <p><strong>Régimen alimenticio:</strong> {{ antecedentes.regimen_alimenticio|default:"-" }}</p>
-                        <p><strong>Carnes:</strong> {{ antecedentes.carnes|default:"-" }}</p>
-                        <p><strong>Legumbres:</strong> {{ antecedentes.legumbres|default:"-" }}</p>
-                        <p><strong>Hidratos de carbono:</strong> {{ antecedentes.hidratos_carbono|default:"-" }}</p>
-                        <p><strong>Lípidos:</strong> {{ antecedentes.lipidos|default:"-" }}</p>
-                        <p><strong>Proteínas:</strong> {{ antecedentes.proteinas|default:"-" }}</p>
-                        <p><strong>Dieta:</strong> {{ antecedentes.dieta|default:"-" }}</p>
-                        <p><strong>Notas de dieta:</strong> {{ antecedentes.notas_dieta|default:"-" }}</p>
+                            <!-- Actividad Física -->
+                            <div class="subseccion mb-4">
+                                <div class="subseccion-titulo">
+                                    <i class="fas fa-running"></i> Actividad Física
+                                </div>
+                                <div class="subseccion-contenido">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Realiza ejercicio</span>
+                                                <span class="badge {% if antecedentes.realiza_actividad_fisica %}bg-success{% else %}bg-secondary{% endif %}">
+                                                    {% if antecedentes.realiza_actividad_fisica %}Sí{% else %}No{% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Frecuencia</span>
+                                                <span class="dato-valor">{{ antecedentes.get_frecuencia_ejercicio_display|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Tipo</span>
+                                                <span class="dato-valor">{{ antecedentes.tipo_ejercicio|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-bed"></i> Sueño</h6>
-                        <p><strong>Horas de sueño:</strong> {{ antecedentes.horas_sueno|default:"-" }}</p>
-                        <p><strong>Calidad del sueño:</strong> {{ antecedentes.calidad_sueno|default:"-" }}</p>
+                            <!-- Alimentación -->
+                            <div class="subseccion mb-4">
+                                <div class="subseccion-titulo">
+                                    <i class="fas fa-utensils"></i> Alimentación y Dieta
+                                </div>
+                                <div class="subseccion-contenido">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Tipo de alimentación</span>
+                                                <span class="dato-valor">{{ antecedentes.get_tipo_alimentacion_display|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Régimen</span>
+                                                <span class="dato-valor">{{ antecedentes.regimen_alimenticio|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Carnes</span>
+                                                <span class="dato-valor">{{ antecedentes.carnes|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Legumbres</span>
+                                                <span class="dato-valor">{{ antecedentes.legumbres|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Carbohidratos</span>
+                                                <span class="dato-valor">{{ antecedentes.hidratos_carbono|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Proteínas</span>
+                                                <span class="dato-valor">{{ antecedentes.proteinas|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="nota-box-simple">
+                                            <strong>Dieta:</strong> {{ antecedentes.dieta|default:"No especificada" }}
+                                        </div>
+                                        {% if antecedentes.notas_dieta %}
+                                        <div class="nota-box-simple mt-2">
+                                            <strong>Notas:</strong> {{ antecedentes.notas_dieta }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-tint"></i> Hidratación</h6>
-                        <p><strong>Hidratación:</strong> {{ antecedentes.hidratacion|default:"-" }}</p>
-                        <p><strong>Litros de agua diarios:</strong> {{ antecedentes.litros_agua_diarios|default:"-" }}</p>
+                            <!-- Sueño e Hidratación -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="subseccion">
+                                        <div class="subseccion-titulo">
+                                            <i class="fas fa-moon"></i> Sueño
+                                        </div>
+                                        <div class="subseccion-contenido">
+                                            <div class="dato-box mb-2">
+                                                <span class="dato-label">Horas de sueño</span>
+                                                <span class="dato-valor">{{ antecedentes.horas_sueno|default:"-" }}</span>
+                                            </div>
+                                            <div class="dato-box">
+                                                <span class="dato-label">Calidad</span>
+                                                <span class="dato-valor">{{ antecedentes.calidad_sueno|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="subseccion">
+                                        <div class="subseccion-titulo">
+                                            <i class="fas fa-tint"></i> Hidratación
+                                        </div>
+                                        <div class="subseccion-contenido">
+                                            <div class="dato-box mb-2">
+                                                <span class="dato-label">Estado</span>
+                                                <span class="dato-valor">{{ antecedentes.hidratacion|default:"-" }}</span>
+                                            </div>
+                                            <div class="dato-box">
+                                                <span class="dato-label">Litros diarios</span>
+                                                <span class="dato-valor">{{ antecedentes.litros_agua_diarios|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-capsules"></i> Suplementación</h6>
-                        <p><strong>Detalle:</strong> {{ antecedentes.suplementacion|default:"-" }}</p>
+                            <!-- Suplementación -->
+                            <div class="subseccion">
+                                <div class="subseccion-titulo">
+                                    <i class="fas fa-pills"></i> Suplementación
+                                </div>
+                                <div class="subseccion-contenido">
+                                    <p class="mb-0">{{ antecedentes.suplementacion|default:"Sin suplementación registrada"|linebreaks }}</p>
+                                </div>
+                            </div>
+                        </div>
                         {% endif %}
                     {% else %}
-                        <div class="alert alert-info mb-0">
-                            No hay antecedentes registrados.
+                        <div class="alert alert-info d-flex align-items-center mb-0">
+                            <i class="fas fa-info-circle fa-2x me-3"></i>
+                            <div>
+                                <strong>Sin información</strong>
+                                <p class="mb-0">No hay antecedentes registrados para este paciente.</p>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
-                <div class="card-footer bg-light">
-                    <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-secondary btn-sm">
+                
+                <div class="card-footer bg-light p-3">
+                    <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Volver a antecedentes
                     </a>
                 </div>
@@ -87,4 +347,221 @@
         </div>
     </div>
 </div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .seccion-antecedentes {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .seccion-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .seccion-header i {
+        font-size: 1.5rem;
+    }
+
+    .seccion-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .condicion-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+    }
+
+    .condicion-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .condicion-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .condicion-valor {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .valor-si {
+        color: #dc3545;
+    }
+
+    .valor-no {
+        color: #6c757d;
+    }
+
+    .condicion-valor i {
+        font-size: 0.9rem;
+    }
+
+    .antecedentes-femeninos {
+        background: linear-gradient(135deg, #ffeef8 0%, #ffe5f1 100%);
+        border-radius: 0.5rem;
+        border-left: 4px solid #e83e8c;
+    }
+
+    .info-box {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .info-box i {
+        font-size: 2rem;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-valor {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .nota-box {
+        background: white;
+        border-radius: 0.5rem;
+        border-left: 4px solid #667eea;
+        overflow: hidden;
+    }
+
+    .nota-header {
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .nota-contenido {
+        padding: 1rem;
+        color: #495057;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        height: 100%;
+    }
+
+    .info-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .info-card-body {
+        padding: 1rem;
+        color: #495057;
+        min-height: 80px;
+    }
+
+    .subseccion {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .subseccion-titulo {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .subseccion-contenido {
+        padding: 1rem;
+    }
+
+    .dato-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 0.375rem;
+    }
+
+    .dato-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .dato-valor {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .nota-box-simple {
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 0.375rem;
+        border-left: 3px solid #667eea;
+    }
+
+    @media (max-width: 767px) {
+        .seccion-antecedentes {
+            padding: 1rem;
+        }
+
+        .seccion-title {
+            font-size: 1rem;
+        }
+
+        .condicion-card {
+            padding: 0.75rem;
+        }
+
+        .condicion-label {
+            font-size: 0.75rem;
+        }
+
+        .condicion-valor {
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 1rem !important;
+        }
+    }
+</style>
 {% endblock %}

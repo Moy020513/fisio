@@ -4,6 +4,18 @@ from datetime import timedelta
 from pacientes.models import Paciente
 
 
+class CitasProximasManager(models.Manager):
+    """Manager personalizado para filtrar citas próximas (próximos 7 días)"""
+    def get_queryset(self):
+        ahora = timezone.now()
+        proxima_semana = ahora + timedelta(days=7)
+        return super().get_queryset().filter(
+            fecha_hora__gt=ahora,
+            fecha_hora__lte=proxima_semana,
+            estado__in=['disponible', 'ocupada']
+        )
+
+
 class Terapeuta(models.Model):
     """Terapeutas disponibles"""
     nombres = models.CharField(max_length=100)
@@ -111,6 +123,8 @@ class AgendaDisponibilidad(models.Model):
 
 class CitasProximas(Cita):
     """Proxy de Cita para filtrar citas próximas (próximos 7 días)"""
+    
+    objects = CitasProximasManager()
     
     class Meta:
         verbose_name = 'Cita Próxima'

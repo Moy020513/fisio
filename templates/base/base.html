@@ -204,6 +204,18 @@
                 sidebarOverlay.classList.remove('active');
             }
         });
+
+        // Auto-cerrar mensajes flash después de 5 segundos
+        const alertElements = document.querySelectorAll('.alert');
+        alertElements.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            }, 5000);
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

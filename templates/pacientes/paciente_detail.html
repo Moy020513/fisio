@@ -63,6 +63,10 @@
                                     <td><strong>{{ paciente.get_tipo_paciente_display }}</strong></td>
                                 </tr>
                                 <tr>
+                                    <td class="text-muted">Fecha de Nacimiento:</td>
+                                    <td>{{ paciente.fecha_nacimiento|date:"d/m/Y"|default:"-" }}</td>
+                                </tr>
+                                <tr>
                                     <td class="text-muted">Fecha de Registro:</td>
                                     <td>{{ paciente.fecha_registro|date:"d/m/Y H:i" }}</td>
                                 </tr>

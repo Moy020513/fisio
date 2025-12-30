@@ -53,7 +53,7 @@ class Paciente(models.Model):
     # Información básica
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField()
+    fecha_nacimiento = models.DateField(blank=True, null=True)
     edad = models.PositiveIntegerField()
     genero = models.CharField(max_length=1, choices=GENERO_CHOICES)
     
@@ -61,7 +61,6 @@ class Paciente(models.Model):
     telefono = models.CharField(max_length=20)
     telefono_emergencia = models.CharField(max_length=20, blank=True, null=True)
     domicilio = models.TextField()
-    email = models.EmailField(blank=True, null=True)
     
     # Información médica
     alergias = models.TextField(blank=True, null=True)

@@ -92,6 +92,11 @@ class PacienteCreateView(LoginRequiredMixin, CreateView):
         context['accion'] = 'crear'
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Paciente {self.object.nombre_completo} creado exitosamente.')
+        return response
+
 
 class PacienteUpdateView(LoginRequiredMixin, UpdateView):
     """Actualizar información del paciente."""
@@ -107,6 +112,11 @@ class PacienteUpdateView(LoginRequiredMixin, UpdateView):
         context['accion'] = 'editar'
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Paciente {self.object.nombre_completo} actualizado exitosamente.')
+        return response
+
 
 class PacienteDeleteView(LoginRequiredMixin, DeleteView):
     """Eliminar paciente."""
@@ -114,6 +124,16 @@ class PacienteDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'pacientes/paciente_confirm_delete.html'
     success_url = reverse_lazy('pacientes:lista')
     pk_url_kwarg = 'pk'
+
+    def post(self, request, *args, **kwargs):
+        # Guardar el nombre del paciente antes de eliminarlo
+        paciente = self.get_object()
+        nombre_paciente = paciente.nombre_completo
+        # Ejecutar la eliminación
+        response = super().post(request, *args, **kwargs)
+        # Agregar el mensaje después de la eliminación
+        messages.success(request, f'Paciente {nombre_paciente} eliminado exitosamente.')
+        return response
 
 
 class AntecedentesPatologicosListView(LoginRequiredMixin, ListView):
@@ -273,8 +293,12 @@ class AntecedentesUpdateView(LoginRequiredMixin, UpdateView):
             antecedentes = AntecedentesNoPatologicos.objects.create(paciente=paciente)
         return antecedentes
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Antecedentes no patológicos actualizado correctamente.')
+        return super().form_valid(form)
+
     def get_success_url(self):
-        return reverse_lazy('pacientes:detalle', kwargs={'pk': self.object.paciente.pk})
+        return reverse_lazy('pacientes:antecedentes-no-patologicos-detalle', kwargs={'pk': self.object.paciente.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
