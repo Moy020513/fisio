@@ -25,7 +25,13 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th width="30%">Paciente:</th>
-                                <td><strong>{{ object.paciente.nombre_completo }}</strong></td>
+                                <td>
+                                    {% if object.paciente %}
+                                        <strong>{{ object.paciente.nombre_completo }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">Sin paciente</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <th>Terapeuta:</th>

@@ -6,6 +6,8 @@ from citas.models import Cita, Terapeuta
 class CitaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['paciente'].required = False
+        self.fields['paciente'].empty_label = 'Sin paciente'
         # Mostrar valor existente en formato compatible con datetime-local
         if self.instance and self.instance.pk and self.instance.fecha_hora:
             local_dt = timezone.localtime(self.instance.fecha_hora)
@@ -17,8 +19,7 @@ class CitaForm(forms.ModelForm):
                   'tipo_sesion', 'estado', 'motivo_cita', 'notas_adicionales']
         widgets = {
             'paciente': forms.Select(attrs={
-                'class': 'form-select',
-                'required': True
+                'class': 'form-select'
             }),
             'terapeuta': forms.Select(attrs={
                 'class': 'form-select'

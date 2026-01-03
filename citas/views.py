@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.http import JsonResponse
@@ -81,6 +82,11 @@ class CitaCreateView(LoginRequiredMixin, CreateView):
     template_name = 'citas/cita_form.html'
     success_url = reverse_lazy('citas:lista')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Cita creada correctamente.')
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = 'Agendar Nueva Cita'
@@ -97,9 +103,15 @@ class CitaUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = f'Editar Cita: {self.object.paciente.nombre_completo}'
+        paciente_nombre = self.object.paciente.nombre_completo if self.object.paciente else 'Sin paciente'
+        context['titulo'] = f'Editar Cita: {paciente_nombre}'
         context['accion'] = 'editar'
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Cita actualizada correctamente.')
+        return response
 
 
 class CitaDeleteView(LoginRequiredMixin, DeleteView):
@@ -107,6 +119,10 @@ class CitaDeleteView(LoginRequiredMixin, DeleteView):
     model = Cita
     template_name = 'citas/cita_confirm_delete.html'
     success_url = reverse_lazy('citas:lista')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Cita cancelada correctamente.')
+        return super().delete(request, *args, **kwargs)
 
 
 class TerapeutaListView(LoginRequiredMixin, ListView):

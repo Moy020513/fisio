@@ -54,7 +54,13 @@ class Cita(models.Model):
         ('evaluacion', 'Evaluación Inicial'),
     ]
     
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='citas')
+    paciente = models.ForeignKey(
+        Paciente,
+        on_delete=models.CASCADE,
+        related_name='citas',
+        null=True,
+        blank=True,
+    )
     terapeuta = models.ForeignKey(Terapeuta, on_delete=models.SET_NULL, null=True, blank=True)
     
     # Fecha y hora
@@ -80,7 +86,8 @@ class Cita(models.Model):
         unique_together = ['terapeuta', 'fecha_hora']  # No puede haber 2 citas del mismo terapeuta a la misma hora
     
     def __str__(self):
-        return f"{self.paciente} - {self.fecha_hora.strftime('%d/%m/%Y %H:%M')}"
+        paciente_nombre = self.paciente.nombre_completo if self.paciente else 'Sin paciente'
+        return f"{paciente_nombre} - {self.fecha_hora.strftime('%d/%m/%Y %H:%M')}"
     
     def get_hora_fin(self):
         """Calcula la hora de finalización de la cita"""
@@ -132,4 +139,5 @@ class CitasProximas(Cita):
         proxy = True  # Usamos proxy para filtrar de manera automática
     
     def __str__(self):
-        return str(f"{self.paciente} - {self.fecha_hora.strftime('%d/%m/%Y %H:%M')}")
+        paciente_nombre = self.paciente.nombre_completo if self.paciente else 'Sin paciente'
+        return str(f"{paciente_nombre} - {self.fecha_hora.strftime('%d/%m/%Y %H:%M')}")

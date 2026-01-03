@@ -28,7 +28,13 @@
                         <tbody>
                             {% for cita in citas %}
                                 <tr>
-                                    <td><strong>{{ cita.paciente.nombre_completo }}</strong></td>
+                                    <td>
+                                        {% if cita.paciente %}
+                                            <strong>{{ cita.paciente.nombre_completo }}</strong>
+                                        {% else %}
+                                            <span class="text-muted">Sin paciente</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ cita.terapeuta.nombre_completo|default:"-" }}</td>
                                     <td>{{ cita.fecha_hora|date:"d/m/Y" }}</td>
                                     <td>{{ cita.fecha_hora|time:"H:i" }} - {{ cita.get_hora_fin|time:"H:i" }}</td>
