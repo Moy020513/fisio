@@ -29,12 +29,17 @@ SECRET_KEY = 'django-insecure-ampk!(!uu+rv^52hgu5_iem1df9mfbhz^7k--w5d7l!cxxipqt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,142.93.65.133,fisio.tecnoy.me').split(',')
+# Hosts y orígenes confiables leídos desde env; strip para evitar espacios.
+ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='localhost,127.0.0.1,142.93.65.133,fisio.tecnoy.me').split(',') if h.strip()]
 
-# Permitir CSRF desde el subdominio en producción
-CSRF_TRUSTED_ORIGINS = [
-    'https://fisio.tecnoy.me', 'http://fisio.tecnoy.me'
-]
+# Permitir CSRF desde los dominios públicos y localhost
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://fisio.tecnoy.me,http://fisio.tecnoy.me,https://www.fisio.tecnoy.me,http://www.fisio.tecnoy.me,http://127.0.0.1:8006,http://localhost:8006'
+).split(',') if o.strip()]
+
+# Si hay proxy/terminación TLS, esto permite que Django reconozca HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
