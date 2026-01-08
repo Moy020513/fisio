@@ -40,6 +40,8 @@ CSRF_TRUSTED_ORIGINS = [o.strip() for o in config(
 
 # Si hay proxy/terminación TLS, esto permite que Django reconozca HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+SECURE_SSL_REDIRECT = False  # Nginx ya maneja redirección
 
 
 # Application definition
