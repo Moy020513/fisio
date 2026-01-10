@@ -1,5 +1,5 @@
 from django import forms
-from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTratamientoEstetico
+from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTratamientoEstetico, EstadoCuenta, Anticipo
 
 
 class TratamientoEstaticoForm(forms.ModelForm):
@@ -443,6 +443,40 @@ class TratamientoEstaticoForm(forms.ModelForm):
                 'checked': True
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Si es una edición (instance existe), cargar las medidas existentes
+        if self.instance and self.instance.pk:
+            tratamiento = self.instance
+            zonas = tratamiento.zonas_corporales.all()
+            
+            # Detectar la zona principal basándose en las zonas existentes
+            zonas_keys = [zona.zona for zona in zonas]
+            if any(z in ['abdomen_alto', 'cintura', 'abdomen_bajo'] for z in zonas_keys):
+                self.fields['zona_principal'].initial = 'abdomen'
+            elif any(z in ['espalda_alta', 'zona_axilar', 'espalda_baja'] for z in zonas_keys):
+                self.fields['zona_principal'].initial = 'espalda'
+            elif any(z in ['femur_proximal', 'femur_medial', 'cadera_distal'] for z in zonas_keys):
+                self.fields['zona_principal'].initial = 'pierna'
+            
+            for zona in zonas:
+                zona_key = zona.zona
+                for medida in zona.medidas.all():
+                    sesion = medida.numero_sesion
+                    if sesion == 1:
+                        sufijo = '_s1'
+                    elif sesion == 3:
+                        sufijo = '_s34'
+                    elif sesion == 6:
+                        sufijo = '_s67'
+                    else:
+                        continue
+                    
+                    field_name = f"{zona_key}{sufijo}"
+                    if field_name in self.fields:
+                        self.fields[field_name].initial = float(medida.medida_cm)
 
 
 class MedidasZonaForm(forms.ModelForm):
@@ -529,3 +563,63 @@ class EvolucionTratamientoEstaticoForm(forms.ModelForm):
                 'placeholder': 'Recomendaciones para la próxima sesión'
             }),
         }
+
+
+class EstadoCuentaForm(forms.ModelForm):
+    """Formulario para Estado de Cuenta"""
+    
+    class Meta:
+        model = EstadoCuenta
+        fields = ['costo_total']
+        widgets = {
+            'costo_total': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'placeholder': 'Costo total del tratamiento'
+            }),
+        }
+        labels = {
+            'costo_total': 'Costo Total del Tratamiento'
+        }
+
+
+class AnticipoForm(forms.ModelForm):
+    """Formulario para registrar anticipos"""
+    
+    class Meta:
+        model = Anticipo
+        fields = ['monto', 'fecha_pago', 'concepto', 'notas']
+        widgets = {
+            'monto': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'placeholder': '0.00'
+            }),
+            'fecha_pago': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date'
+                },
+                format='%Y-%m-%d'
+            ),
+            'concepto': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Anticipo'
+            }),
+            'notas': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Notas adicionales (opcional)'
+            }),
+        }
+        labels = {
+            'monto': 'Monto del Anticipo',
+            'fecha_pago': 'Fecha de Pago',
+            'concepto': 'Concepto',
+            'notas': 'Notas'
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['fecha_pago'].input_formats = ['%Y-%m-%d']
+

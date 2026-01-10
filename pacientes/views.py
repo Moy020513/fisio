@@ -31,7 +31,6 @@ class PacienteListView(LoginRequiredMixin, ListView):
                 Q(nombres__icontains=busqueda)
                 | Q(apellidos__icontains=busqueda)
                 | Q(telefono__icontains=busqueda)
-                | Q(email__icontains=busqueda)
             )
         tipo = self.request.GET.get('tipo')
         if tipo:
@@ -52,14 +51,23 @@ class PacienteListView(LoginRequiredMixin, ListView):
         return context
 
     def render_to_response(self, context, **response_kwargs):
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            table_html = render_to_string('pacientes/partials/_paciente_table.html', context=context, request=self.request)
-            pagination_html = render_to_string('pacientes/partials/_paciente_pagination.html', context=context, request=self.request)
-            return JsonResponse({
-                'table': table_html,
-                'pagination': pagination_html,
-                'resultados': context['page_obj'].paginator.count,
-            })
+        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+        if is_ajax:
+            try:
+                table_html = render_to_string('pacientes/partials/_paciente_table.html', context=context, request=self.request)
+                pagination_html = render_to_string('pacientes/partials/_paciente_pagination.html', context=context, request=self.request)
+                resultados = context.get('page_obj').paginator.count if context.get('page_obj') else 0
+                return JsonResponse({
+                    'table': table_html,
+                    'pagination': pagination_html,
+                    'resultados': resultados,
+                })
+            except Exception as e:
+                import traceback
+                return JsonResponse({
+                    'error': str(e),
+                    'traceback': traceback.format_exc()
+                }, status=500)
         return super().render_to_response(context, **response_kwargs)
 
 
@@ -151,7 +159,6 @@ class AntecedentesPatologicosListView(LoginRequiredMixin, ListView):
                 Q(nombres__icontains=busqueda)
                 | Q(apellidos__icontains=busqueda)
                 | Q(telefono__icontains=busqueda)
-                | Q(email__icontains=busqueda)
             )
         return queryset
 
@@ -161,7 +168,8 @@ class AntecedentesPatologicosListView(LoginRequiredMixin, ListView):
         return context
 
     def render_to_response(self, context, **response_kwargs):
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+        if is_ajax:
             table_html = render_to_string('pacientes/partials/_antecedentes_pat_table.html', context=context, request=self.request)
             pagination_html = render_to_string('pacientes/partials/_antecedentes_pat_pagination.html', context=context, request=self.request)
             return JsonResponse({
@@ -187,7 +195,6 @@ class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
                 Q(nombres__icontains=busqueda)
                 | Q(apellidos__icontains=busqueda)
                 | Q(telefono__icontains=busqueda)
-                | Q(email__icontains=busqueda)
             )
         return queryset
 
@@ -197,7 +204,8 @@ class AntecedentesNoPatologicosListView(LoginRequiredMixin, ListView):
         return context
 
     def render_to_response(self, context, **response_kwargs):
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        is_ajax = self.request.headers.get('x-requested-with') == 'XMLHttpRequest' or self.request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+        if is_ajax:
             table_html = render_to_string('pacientes/partials/_antecedentes_no_pat_table.html', context=context, request=self.request)
             pagination_html = render_to_string('pacientes/partials/_antecedentes_no_pat_pagination.html', context=context, request=self.request)
             return JsonResponse({

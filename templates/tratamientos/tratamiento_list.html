@@ -5,24 +5,27 @@
 {% block page_title %}Tratamientos Estéticos{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid p-0">
     <!-- Filtros -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <form method="get" class="form-inline d-flex gap-2">
-                        <select name="activos" class="form-select" style="max-width: 200px;">
-                            <option value="">Todos</option>
-                            <option value="true" {% if request.GET.activos == 'true' %}selected{% endif %}>Solo Activos</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Filtrar
-                        </button>
-                    </form>
+    <div class="card border-0 shadow-sm mb-2 mb-md-4 mx-1 mx-md-3">
+        <div class="card-body p-2 p-md-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-8">
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6">
+                            <input type="text" id="buscar-input" class="form-control form-control-sm" 
+                                   placeholder="🔍 Buscar paciente..." value="{{ buscar }}">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <select id="activos-select" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="true" {% if activos == 'true' %}selected{% endif %}>Solo Activos</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <a href="{% url 'tratamientos:crear' %}" class="btn btn-success">
+                <div class="col-12 col-md-4 text-md-end">
+                    <a href="{% url 'tratamientos:crear' %}" class="btn btn-success btn-sm w-100 w-md-auto">
                         <i class="fas fa-plus"></i> Nuevo Tratamiento
                     </a>
                 </div>
@@ -31,87 +34,104 @@
     </div>
 
     <!-- Estadísticas -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
+    <div class="row g-2 mb-2 mb-md-4 mx-1 mx-md-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Tratamientos Activos</h6>
-                    <h3 class="mb-0">{{ total_activos }}</h3>
+                <div class="card-body p-2 p-md-3">
+                    <h6 class="text-muted mb-1 small">Tratamientos Activos</h6>
+                    <h4 class="mb-0 fs-5 fs-md-3">{{ total_activos }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2">Total Resultados</h6>
-                    <h3 class="mb-0">{{ page_obj.paginator.count }}</h3>
+                <div class="card-body p-2 p-md-3">
+                    <h6 class="text-muted mb-1 small">Total Resultados</h6>
+                    <h4 class="mb-0 fs-5 fs-md-3">{{ page_obj.paginator.count }}</h4>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Tabla -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-spa"></i> Lista de Tratamientos</h5>
+    <div class="card border-0 shadow-sm mx-1 mx-md-3">
+        <div class="card-header bg-light py-2 py-md-3">
+            <h6 class="mb-0 fs-6 fs-md-5"><i class="fas fa-spa"></i> Lista de Tratamientos</h6>
         </div>
         <div class="card-body p-0">
             {% if tratamientos %}
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0 table-mobile">
                         <thead class="table-light">
                             <tr>
-                                <th>Paciente</th>
-                                <th>Zonas</th>
-                                <th>Inicio</th>
-                                <th>Fin Planificado</th>
-                                <th>Sesiones</th>
-                                <th>Estado</th>
-                                <th class="text-center">Acciones</th>
+                                <th class="small px-1 px-md-3">Paciente</th>
+                                <th class="small px-1 px-md-3">Zonas</th>
+                                <th class="small px-1 px-md-3">Inicio</th>
+                                <th class="small px-1 px-md-3">Fin Planificado</th>
+                                <th class="small px-1 px-md-3 text-center">Sesiones</th>
+                                <th class="small px-1 px-md-3">Estado</th>
+                                <th class="text-center small px-1 px-md-3">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for tratamiento in tratamientos %}
                                 <tr>
-                                    <td>
-                                        <strong>{{ tratamiento.paciente.nombre_completo }}</strong>
+                                    <td class="small px-1 px-md-3">
+                                        <strong class="text-nowrap">{{ tratamiento.paciente.nombre_completo }}</strong>
                                     </td>
-                                    <td>
-                                        <small>
-                                            {% if tratamiento.es_tratamiento_facial %}
-                                                <span class="badge bg-secondary">Facial</span>
-                                            {% endif %}
-                                            {% if tratamiento.zona_trabajo %}
-                                                {{ tratamiento.zona_trabajo|truncatewords:3 }}
-                                            {% else %}
-                                                -
-                                            {% endif %}
-                                        </small>
+                                    <td class="small px-1 px-md-3">
+                                        {% if tratamiento.es_tratamiento_facial %}
+                                            <span class="badge bg-secondary">Facial</span>
+                                        {% endif %}
+                                        {% if tratamiento.zona_trabajo %}
+                                            <span class="d-none d-lg-inline">{{ tratamiento.zona_trabajo|truncatewords:3 }}</span>
+                                            <span class="d-lg-none">{{ tratamiento.zona_trabajo|truncatewords:1 }}</span>
+                                        {% else %}
+                                            -
+                                        {% endif %}
                                     </td>
-                                    <td>{{ tratamiento.fecha_inicio|date:"d/m/Y" }}</td>
-                                    <td>{{ tratamiento.fecha_fin_planificada|date:"d/m/Y"|default:"-" }}</td>
-                                    <td>
+                                    <td class="small px-1 px-md-3 text-nowrap">
+                                        <span class="d-none d-sm-inline">{{ tratamiento.fecha_inicio|date:"d/m/Y" }}</span>
+                                        <span class="d-sm-none">{{ tratamiento.fecha_inicio|date:"d/m" }}</span>
+                                    </td>
+                                    <td class="small px-1 px-md-3 text-nowrap">
+                                        {% if tratamiento.fecha_fin_planificada %}
+                                            <span class="d-none d-sm-inline">{{ tratamiento.fecha_fin_planificada|date:"d/m/Y" }}</span>
+                                            <span class="d-sm-none">{{ tratamiento.fecha_fin_planificada|date:"d/m" }}</span>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="small px-1 px-md-3 text-center">
                                         <span class="badge bg-info">
                                             {{ tratamiento.evoluciontratamientoestetico_set.count }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="small px-1 px-md-3">
                                         {% if tratamiento.activo %}
-                                            <span class="badge bg-success">Activo</span>
+                                            <span class="badge bg-success">
+                                                <span class="d-none d-sm-inline">Activo</span>
+                                                <span class="d-sm-none">✓</span>
+                                            </span>
                                         {% else %}
-                                            <span class="badge bg-secondary">Inactivo</span>
+                                            <span class="badge bg-secondary">
+                                                <span class="d-none d-sm-inline">Inactivo</span>
+                                                <span class="d-sm-none">✗</span>
+                                            </span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-center">
-                                        <a href="{% url 'tratamientos:detalle' tratamiento.pk %}" class="btn btn-sm btn-info" title="Ver detalle">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-sm btn-primary" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-sm btn-success" title="Nueva sesión">
-                                            <i class="fas fa-plus"></i>
-                                        </a>
+                                    <td class="text-center px-1 px-md-3">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'tratamientos:detalle' tratamiento.pk %}" class="btn btn-info btn-sm" title="Ver detalle">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary btn-sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success btn-sm" title="Nueva sesión">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -121,34 +141,40 @@
 
                 <!-- Paginación -->
                 {% if is_paginated %}
-                    <nav aria-label="Paginación" class="p-3">
-                        <ul class="pagination mb-0">
+                    <nav aria-label="Paginación" class="p-2 p-md-3">
+                        <ul class="pagination pagination-sm mb-0 flex-wrap justify-content-center">
                             {% if page_obj.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=1">Primera</a>
+                                    <a class="page-link" href="?page=1">
+                                        <span class="d-none d-md-inline">Primera</span>
+                                        <span class="d-md-none">«</span>
+                                    </a>
                                 </li>
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                                        &lsaquo; Anterior
+                                        <span class="d-none d-md-inline">&lsaquo; Anterior</span>
+                                        <span class="d-md-none">‹</span>
                                     </a>
                                 </li>
                             {% endif %}
 
                             <li class="page-item disabled">
                                 <span class="page-link">
-                                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    <span class="d-none d-md-inline">Página </span>{{ page_obj.number }}<span class="d-none d-md-inline"> de {{ page_obj.paginator.num_pages }}</span>
                                 </span>
                             </li>
 
                             {% if page_obj.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                                        Siguiente &rsaquo;
+                                        <span class="d-none d-md-inline">Siguiente &rsaquo;</span>
+                                        <span class="d-md-none">›</span>
                                     </a>
                                 </li>
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-                                        Última
+                                        <span class="d-none d-md-inline">Última</span>
+                                        <span class="d-md-none">»</span>
                                     </a>
                                 </li>
                             {% endif %}
@@ -156,12 +182,159 @@
                     </nav>
                 {% endif %}
             {% else %}
-                <div class="alert alert-info m-3">
+                <div class="alert alert-info m-2 m-md-3 small">
                     <i class="fas fa-info-circle"></i> No hay tratamientos registrados.
-                    <a href="{% url 'tratamientos:crear' %}" class="btn btn-sm btn-primary">Crear nuevo</a>
+                    <a href="{% url 'tratamientos:crear' %}" class="btn btn-sm btn-primary mt-2 mt-md-0">Crear nuevo</a>
                 </div>
             {% endif %}
         </div>
     </div>
 </div>
+
+<style>
+    /* Quitar todo padding del container en móvil */
+    @media (max-width: 767px) {
+        .container-fluid {
+            padding: 0 !important;
+        }
+    }
+
+    /* Ajustes para móvil */
+    @media (max-width: 575px) {
+        .table-mobile {
+            font-size: 0.65rem;
+        }
+        .table-mobile td, .table-mobile th {
+            padding: 0.3rem 0.1rem !important;
+            vertical-align: middle;
+            white-space: normal;
+        }
+        .btn-group-sm > .btn, .btn-sm {
+            padding: 0.15rem 0.3rem;
+            font-size: 0.65rem;
+        }
+        .badge {
+            font-size: 0.6rem;
+            padding: 0.2em 0.35em;
+        }
+        /* Forzar que el nombre no se parta */
+        .text-nowrap {
+            white-space: nowrap !important;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    @media (min-width: 576px) and (max-width: 767px) {
+        .table-mobile {
+            font-size: 0.75rem;
+        }
+        .table-mobile td, .table-mobile th {
+            padding: 0.4rem 0.2rem !important;
+        }
+    }
+</style>
+
+<script>
+    // Filtros en tiempo real
+    let timeoutId;
+    let isFiltering = false;
+    
+    function aplicarFiltros() {
+        if (isFiltering) return;
+        
+        const buscarInput = document.getElementById('buscar-input');
+        const activosSelect = document.getElementById('activos-select');
+        
+        const buscar = buscarInput.value.trim();
+        const activos = activosSelect.value;
+        
+        console.log('Aplicando filtros:', { buscar, activos });
+        
+        const params = new URLSearchParams();
+        if (buscar) params.append('buscar', buscar);
+        if (activos) params.append('activos', activos);
+        
+        const newUrl = window.location.pathname + '?' + params.toString();
+        console.log('Nueva URL:', newUrl);
+        
+        isFiltering = true;
+        
+        // Actualizar URL sin recargar
+        window.history.pushState({}, '', newUrl);
+        
+        // Cargar contenido con AJAX
+        fetch(newUrl)
+            .then(response => response.text())
+            .then(html => {
+                console.log('HTML recibido');
+                
+                // Crear un contenedor temporal
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                
+                // Encontrar la sección de contenedor-fluid
+                const newContainer = temp.querySelector('.container-fluid');
+                const oldContainer = document.querySelector('.container-fluid');
+                
+                if (newContainer && oldContainer) {
+                    // Reemplazar el contenido pero preservar el formulario
+                    const oldFiltersForm = oldContainer.querySelector('.card.border-0.shadow-sm.mb-2.mb-md-4.mx-1.mx-md-3');
+                    const newFiltersForm = newContainer.querySelector('.card.border-0.shadow-sm.mb-2.mb-md-4.mx-1.mx-md-3');
+                    
+                    // Reemplazar TODO MENOS el formulario
+                    if (oldFiltersForm && newFiltersForm) {
+                        const oldFormParent = oldFiltersForm.parentElement;
+                        
+                        // Reemplazar únicamente las secciones después del formulario
+                        let currentElement = oldFiltersForm.nextElementSibling;
+                        while (currentElement) {
+                            const nextElement = currentElement.nextElementSibling;
+                            currentElement.remove();
+                            currentElement = nextElement;
+                        }
+                        
+                        // Añadir los nuevos elementos después del formulario
+                        let newElement = newFiltersForm.nextElementSibling;
+                        while (newElement) {
+                            const nextNewElement = newElement.nextElementSibling;
+                            oldContainer.appendChild(newElement.cloneNode(true));
+                            newElement = nextNewElement;
+                        }
+                    }
+                    
+                    console.log('Contenido actualizado');
+                }
+                
+                isFiltering = false;
+                
+                // Restaurar focus al input
+                const buscarInputElement = document.getElementById('buscar-input');
+                if (buscarInputElement) {
+                    buscarInputElement.focus();
+                    buscarInputElement.setSelectionRange(buscar.length, buscar.length);
+                }
+            })
+            .catch(error => {
+                console.error('Error al filtrar:', error);
+                isFiltering = false;
+            });
+    }
+    
+    // Event listeners
+    const buscarInput = document.getElementById('buscar-input');
+    const activosSelect = document.getElementById('activos-select');
+    
+    if (buscarInput) {
+        buscarInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(aplicarFiltros, 500);
+        });
+    }
+    
+    if (activosSelect) {
+        activosSelect.addEventListener('change', aplicarFiltros);
+    }
+</script>
 {% endblock %}

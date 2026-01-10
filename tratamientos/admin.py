@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (
     TratamientoEstetico, ZonaCorporal, MedidasZona,
-    EvolucionTratamientoEstetico, TecnicaTratamiento, TratamientoFacial
+    EvolucionTratamientoEstetico, TecnicaTratamiento, TratamientoFacial,
+    EstadoCuenta, Anticipo
 )
 
 
@@ -151,3 +152,54 @@ class TratamientoFacialAdmin(admin.ModelAdmin):
             'fields': ('objetivo_facial',)
         }),
     )
+
+
+class AnticipoInline(admin.TabularInline):
+    model = Anticipo
+    extra = 1
+    readonly_fields = ('fecha_registro',)
+
+
+@admin.register(EstadoCuenta)
+class EstadoCuentaAdmin(admin.ModelAdmin):
+    list_display = ('tratamiento', 'costo_total', 'obtener_total_pagado', 'obtener_saldo_pendiente')
+    search_fields = ('tratamiento__paciente__nombres', 'tratamiento__paciente__apellidos')
+    readonly_fields = ('fecha_creacion', 'fecha_actualizacion', 'obtener_total_pagado', 'obtener_saldo_pendiente')
+    
+    fieldsets = (
+        ('Tratamiento', {
+            'fields': ('tratamiento',)
+        }),
+        ('Costos', {
+            'fields': ('costo_total', 'obtener_total_pagado', 'obtener_saldo_pendiente')
+        }),
+        ('Fechas', {
+            'fields': ('fecha_creacion', 'fecha_actualizacion')
+        }),
+    )
+    
+    inlines = [AnticipoInline]
+
+
+@admin.register(Anticipo)
+class AnticipoAdmin(admin.ModelAdmin):
+    list_display = ('estado_cuenta', 'monto', 'fecha_pago', 'concepto')
+    list_filter = ('fecha_pago',)
+    search_fields = ('estado_cuenta__tratamiento__paciente__nombres', 'concepto')
+    readonly_fields = ('fecha_registro',)
+    
+    fieldsets = (
+        ('Estado de Cuenta', {
+            'fields': ('estado_cuenta',)
+        }),
+        ('Información del Pago', {
+            'fields': ('monto', 'fecha_pago', 'concepto')
+        }),
+        ('Notas', {
+            'fields': ('notas',)
+        }),
+        ('Control', {
+            'fields': ('fecha_registro',)
+        }),
+    )
+

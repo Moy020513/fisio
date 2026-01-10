@@ -1,0 +1,73 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Eliminar Anticipo - {{ tratamiento.paciente.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:lista' %}">Tratamientos</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:detalle' tratamiento.pk %}">{{ tratamiento.paciente.nombre_completo }}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}">Estado de Cuenta</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Eliminar Anticipo</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmar Eliminación
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                    </div>
+
+                    <h5 class="mb-3">¿Está seguro que desea eliminar este anticipo?</h5>
+                    
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Paciente:</strong> {{ tratamiento.paciente.nombre_completo }}</p>
+                                    <p class="mb-2"><strong>Concepto:</strong> {{ object.concepto }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong>Monto:</strong> <span class="text-success fw-bold">${{ object.monto }}</span></p>
+                                    <p class="mb-2"><strong>Fecha de Pago:</strong> {{ object.fecha_pago|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                            {% if object.notas %}
+                            <hr>
+                            <p class="mb-0"><strong>Notas:</strong> {{ object.notas }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, Eliminar Anticipo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

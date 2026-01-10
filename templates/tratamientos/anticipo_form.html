@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ titulo }} - {{ tratamiento.paciente.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:lista' %}">Tratamientos</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:detalle' tratamiento.pk %}">{{ tratamiento.paciente.nombre_completo }}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}">Estado de Cuenta</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ titulo }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-money-bill-wave me-2"></i>
+                        {{ titulo }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Paciente:</strong> {{ tratamiento.paciente.nombre_completo }}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.monto.id_for_label }}" class="form-label">
+                                {{ form.monto.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.monto }}
+                            {% if form.monto.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.monto.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.fecha_pago.id_for_label }}" class="form-label">
+                                {{ form.fecha_pago.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.fecha_pago }}
+                            {% if form.fecha_pago.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.fecha_pago.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.concepto.id_for_label }}" class="form-label">
+                                {{ form.concepto.label }}
+                            </label>
+                            {{ form.concepto }}
+                            {% if form.concepto.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.concepto.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notas.id_for_label }}" class="form-label">
+                                {{ form.notas.label }}
+                            </label>
+                            {{ form.notas }}
+                            {% if form.notas.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.notas.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Anticipo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

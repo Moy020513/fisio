@@ -18,7 +18,7 @@ class PacienteForm(forms.ModelForm):
     class Meta:
         model = Paciente
         fields = ['nombres', 'apellidos', 'fecha_nacimiento', 'edad', 'genero',
-                  'telefono', 'telefono_emergencia', 'domicilio',
+                  'telefono', 'telefono_emergencia', 'domicilio', 'ocupacion',
                   'alergias', 'grupo_sanguineo', 'religion',
                   'tipo_paciente', 'es_frecuente']
         widgets = {
@@ -64,6 +64,10 @@ class PacienteForm(forms.ModelForm):
                 'rows': 3,
                 'required': True
             }),
+            'ocupacion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Ingeniero, Docente'
+            }),
             'alergias': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Ej: Penicilina, Frutos secos',
@@ -93,6 +97,7 @@ class PacienteForm(forms.ModelForm):
             'telefono': 'Teléfono',
             'telefono_emergencia': 'Teléfono de Emergencia',
             'domicilio': 'Domicilio',
+            'ocupacion': 'Ocupación',
             'alergias': 'Alergias',
             'grupo_sanguineo': 'Grupo Sanguíneo',
             'religion': 'Religión',

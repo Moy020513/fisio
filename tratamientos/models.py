@@ -215,3 +215,54 @@ class TratamientoFacial(models.Model):
     
     def __str__(self):
         return f"Tratamiento Facial - {self.tratamiento_estetico.paciente}"
+
+
+class EstadoCuenta(models.Model):
+    """Estado de cuentas del tratamiento estético"""
+    tratamiento = models.OneToOneField(TratamientoEstetico, on_delete=models.CASCADE, related_name='estado_cuenta')
+    
+    # Costo total del tratamiento
+    costo_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    # Fecha de creación
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Estado de Cuenta'
+        verbose_name_plural = 'Estados de Cuenta'
+    
+    def __str__(self):
+        return f"Estado de Cuenta - {self.tratamiento.paciente}"
+    
+    def obtener_total_pagado(self):
+        """Calcula el total de anticipos pagados"""
+        return sum(anticipo.monto for anticipo in self.anticipos.all())
+    
+    def obtener_saldo_pendiente(self):
+        """Calcula el saldo pendiente"""
+        return self.costo_total - self.obtener_total_pagado()
+
+
+class Anticipo(models.Model):
+    """Anticipos y pagos realizados para el tratamiento"""
+    estado_cuenta = models.ForeignKey(EstadoCuenta, on_delete=models.CASCADE, related_name='anticipos')
+    
+    # Información del pago
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_pago = models.DateField()
+    
+    # Detalles opcionales
+    concepto = models.CharField(max_length=200, default='Anticipo', blank=True)
+    notas = models.TextField(blank=True, null=True)
+    
+    # Control
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Anticipo'
+        verbose_name_plural = 'Anticipos'
+        ordering = ['fecha_pago']
+    
+    def __str__(self):
+        return f"Anticipo ${self.monto} - {self.fecha_pago}"

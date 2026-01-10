@@ -61,6 +61,7 @@ class Paciente(models.Model):
     telefono = models.CharField(max_length=20)
     telefono_emergencia = models.CharField(max_length=20, blank=True, null=True)
     domicilio = models.TextField()
+    ocupacion = models.CharField(max_length=100, blank=True, null=True)
     
     # Información médica
     alergias = models.TextField(blank=True, null=True)

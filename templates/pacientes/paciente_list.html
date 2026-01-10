@@ -192,6 +192,7 @@
         const paginacion = document.getElementById('paginacionPacientes');
         const resultados = document.getElementById('resultadosEncontrados');
         let timer;
+        let busquedaValor = input ? input.value : '';
 
         const buildUrl = () => {
             const params = new URLSearchParams(new FormData(form));
@@ -200,20 +201,46 @@
 
         const fetchData = () => {
             const url = buildUrl();
-            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(resp => resp.json())
-                .then(data => {
-                    if (tabla && data.table) tabla.innerHTML = data.table;
-                    if (paginacion && data.pagination) paginacion.innerHTML = data.pagination;
-                    if (resultados && typeof data.resultados !== 'undefined') resultados.textContent = data.resultados;
-                    attachPaginationLinks();
+            
+            fetch(url, { 
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+                .then(resp => {
+                    return resp.json();
                 })
-                .catch(() => {/* silencioso */});
+                .then(data => {
+                    if (tabla && data.table) {
+                        tabla.innerHTML = data.table;
+                    }
+                    if (paginacion && data.pagination) {
+                        paginacion.innerHTML = data.pagination;
+                    }
+                    if (resultados && typeof data.resultados !== 'undefined') {
+                        resultados.textContent = data.resultados;
+                    }
+                    attachPaginationLinks();
+                    
+                    // Mantener el focus en el input
+                    if (input) {
+                        input.focus();
+                        input.setSelectionRange(busquedaValor.length, busquedaValor.length);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al buscar pacientes:', error);
+                });
         };
 
         const debounceFetch = () => {
+            if (input) {
+                busquedaValor = input.value;
+            }
             clearTimeout(timer);
-            timer = setTimeout(fetchData, 250);
+            timer = setTimeout(fetchData, 500);
         };
 
         const attachPaginationLinks = () => {
@@ -223,21 +250,33 @@
                     e.preventDefault();
                     const url = this.getAttribute('href');
                     if (!url) return;
-                    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    
+                    fetch(url, { 
+                        headers: { 
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    })
                         .then(resp => resp.json())
                         .then(data => {
                             if (tabla && data.table) tabla.innerHTML = data.table;
                             if (paginacion && data.pagination) paginacion.innerHTML = data.pagination;
                             if (resultados && typeof data.resultados !== 'undefined') resultados.textContent = data.resultados;
                             attachPaginationLinks();
+                            window.scrollTo(0, 0);
                         })
-                        .catch(() => {/* silencioso */});
+                        .catch(error => console.error('Error en paginación:', error));
                 });
             });
         };
 
-        if (input) input.addEventListener('input', debounceFetch);
-        if (tipo) tipo.addEventListener('change', fetchData);
+        if (input) {
+            input.addEventListener('input', debounceFetch);
+        }
+        if (tipo) {
+            tipo.addEventListener('change', fetchData);
+        }
         attachPaginationLinks();
     })();
 </script>

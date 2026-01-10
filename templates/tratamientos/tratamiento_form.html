@@ -380,5 +380,13 @@
             document.getElementById('pierna-section').style.display = 'block';
         }
     }
+    
+    // Ejecutar la función al cargar la página si ya hay una zona seleccionada
+    document.addEventListener('DOMContentLoaded', function() {
+        const zonaPrincipal = document.getElementById('zona_principal');
+        if (zonaPrincipal && zonaPrincipal.value) {
+            mostrarZonasEspecificas(zonaPrincipal.value);
+        }
+    });
 </script>
 {% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'base/base.html' %}
+{% load tratamiento_filters %}
+
+{% block title %}Estado de Cuenta - {{ tratamiento.paciente.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-2 px-md-3 mt-2 mt-md-4">
+    <div class="row mb-3 mb-md-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb" class="d-none d-md-block">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:lista' %}">Tratamientos</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'tratamientos:detalle' tratamiento.pk %}">{{ tratamiento.paciente.nombre_completo }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Estado de Cuenta</li>
+                </ol>
+            </nav>
+            <!-- Botón de regreso para móvil -->
+            <a href="{% url 'tratamientos:detalle' tratamiento.pk %}" class="btn btn-sm btn-secondary d-md-none mb-2">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3 mb-md-4">
+                <div class="card-header bg-primary text-white py-2 py-md-3">
+                    <h5 class="mb-0 fs-6 fs-md-4">
+                        <i class="fas fa-dollar-sign me-2"></i>
+                        <span class="d-none d-md-inline">Estado de Cuenta - </span>{{ tratamiento.paciente.nombre_completo }}
+                    </h5>
+                </div>
+                <div class="card-body p-2 p-md-3">
+                    <!-- Resumen financiero -->
+                    <div class="row g-2 mb-3 mb-md-4">
+                        <div class="col-12 col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center py-2 py-md-3">
+                                    <h6 class="text-muted mb-1 small">Costo Total</h6>
+                                    <h4 class="text-primary mb-2 fs-5 fs-md-3">${{ estado_cuenta.costo_total|currency }}</h4>
+                                    <a href="{% url 'tratamientos:estado_cuenta_editar' tratamiento.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> <span class="d-none d-sm-inline">Modificar</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center py-2 py-md-3">
+                                    <h6 class="text-muted mb-1 small">Total Pagado</h6>
+                                    <h4 class="text-success mb-0 fs-5 fs-md-3">${{ total_pagado|currency }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center py-2 py-md-3">
+                                    <h6 class="text-muted mb-1 small">Saldo Pendiente</h6>
+                                    <h4 class="mb-0 fs-5 fs-md-3 {% if saldo_pendiente > 0 %}text-danger{% else %}text-success{% endif %}">
+                                        ${{ saldo_pendiente|currency }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Header de anticipos -->
+                    <div class="d-flex justify-content-between align-items-center mb-2 mb-md-3">
+                        <h6 class="mb-0 fs-6 fs-md-5">Historial de Anticipos</h6>
+                        <a href="{% url 'tratamientos:anticipo_crear' tratamiento.pk %}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Registrar</span>
+                        </a>
+                    </div>
+
+                    {% if anticipos %}
+                        <!-- Vista de tabla para desktop -->
+                        <div class="table-responsive d-none d-md-block">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Concepto</th>
+                                        <th>Monto</th>
+                                        <th>Fecha de Pago</th>
+                                        <th>Notas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for anticipo in anticipos %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ anticipo.concepto }}</td>
+                                        <td class="text-success fw-bold">${{ anticipo.monto|currency }}</td>
+                                        <td>{{ anticipo.fecha_pago|date:"d/m/Y" }}</td>
+                                        <td>{{ anticipo.notas|default:"-" }}</td>
+                                        <td>
+                                            <a href="{% url 'tratamientos:anticipo_editar' anticipo.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'tratamientos:anticipo_eliminar' anticipo.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="2" class="text-end fw-bold">Total:</td>
+                                        <td class="text-success fw-bold">${{ total_pagado|currency }}</td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Vista de cards para móvil -->
+                        <div class="d-md-none">
+                            {% for anticipo in anticipos %}
+                            <div class="card mb-2 shadow-sm">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <small class="text-muted d-block">#{{ forloop.counter }}</small>
+                                            <strong class="d-block">{{ anticipo.concepto }}</strong>
+                                            <h5 class="text-success mb-0">${{ anticipo.monto|currency }}</h5>
+                                        </div>
+                                        <a href="{% url 'tratamientos:anticipo_editar' anticipo.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            {{ anticipo.fecha_pago|date:"d/m/Y" }}
+                                        </small>
+                                        {% if anticipo.notas %}
+                                        <small class="text-muted" data-bs-toggle="tooltip" title="{{ anticipo.notas }}">
+                                            <i class="fas fa-comment-alt"></i>
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <!-- Total en móvil -->
+                            <div class="card bg-light mt-3">
+                                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                                    <strong>Total Pagado:</strong>
+                                    <h5 class="text-success mb-0">${{ total_pagado|currency }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info py-2 small">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No hay anticipos registrados. Haz clic en "Registrar" para agregar el primer pago.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Botón de regreso solo visible en desktop -->
+            <div class="d-none d-md-flex justify-content-between">
+                <a href="{% url 'tratamientos:detalle' tratamiento.pk %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Tratamiento
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para tooltips en móvil -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

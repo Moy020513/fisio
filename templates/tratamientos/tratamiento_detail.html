@@ -5,8 +5,8 @@
 {% block page_title %}Detalle del Tratamiento{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row mb-4">
+<div class="container-fluid p-0 p-md-3">
+    <div class="row mb-2 mb-md-4 mx-1 mx-md-0">
         <div class="col-12">
             <a href="{% url 'tratamientos:lista' %}" class="btn btn-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Volver
@@ -14,30 +14,30 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mx-0">
         <!-- Información General -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
+        <div class="col-lg-8 px-1 px-md-3 mb-3 mb-md-4">
+            <div class="card border-0 shadow-sm mb-3 mb-md-4">
+                <div class="card-header bg-light py-2 py-md-3">
+                    <h6 class="mb-0 fs-6 fs-md-5">
                         <i class="fas fa-info-circle"></i> Información General
-                    </h5>
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Paciente</h6>
+                <div class="card-body p-2 p-md-3">
+                    <div class="row mb-2 mb-md-3 g-2">
+                        <div class="col-12 col-md-6">
+                            <h6 class="text-muted mb-1 small">Paciente</h6>
                             <p class="mb-0"><strong>{{ tratamiento.paciente.nombre_completo }}</strong></p>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Fecha de Inicio</h6>
+                        <div class="col-12 col-md-6">
+                            <h6 class="text-muted mb-1 small">Fecha de Inicio</h6>
                             <p class="mb-0">{{ tratamiento.fecha_inicio|date:"d/m/Y" }}</p>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Estado</h6>
+                    <div class="row mb-2 mb-md-3 g-2">
+                        <div class="col-6 col-md-6">
+                            <h6 class="text-muted mb-1 small">Estado</h6>
                             <p class="mb-0">
                                 {% if tratamiento.activo %}
                                     <span class="badge bg-success">Activo</span>
@@ -46,8 +46,8 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="col-md-6">
-                            <h6 class="text-muted">Es Tratamiento Facial</h6>
+                        <div class="col-6 col-md-6">
+                            <h6 class="text-muted mb-1 small">Tratamiento Facial</h6>
                             <p class="mb-0">
                                 {% if tratamiento.es_tratamiento_facial %}
                                     <span class="badge bg-info">Sí</span>
@@ -59,125 +59,134 @@
                     </div>
 
                     {% if tratamiento.zona_trabajo %}
-                        <div class="mb-3">
-                            <h6 class="text-muted">Zonas de Trabajo</h6>
-                            <p class="mb-0">{{ tratamiento.zona_trabajo|linebreaks }}</p>
+                        <div class="mb-2 mb-md-3">
+                            <h6 class="text-muted mb-1 small">Zonas de Trabajo</h6>
+                            <p class="mb-0 small">{{ tratamiento.zona_trabajo|linebreaks }}</p>
                         </div>
                     {% endif %}
 
                     {% if tratamiento.tecnicas_descripcion %}
-                        <div class="mb-3">
-                            <h6 class="text-muted">Descripción de Técnicas</h6>
-                            <p class="mb-0">{{ tratamiento.tecnicas_descripcion|linebreaks }}</p>
+                        <div class="mb-0">
+                            <h6 class="text-muted mb-1 small">Descripción de Técnicas</h6>
+                            <p class="mb-0 small">{{ tratamiento.tecnicas_descripcion|linebreaks }}</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Zonas Corporales y Medidas -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
+            <div class="card border-0 shadow-sm mb-3 mb-md-4">
+                <div class="card-header bg-light py-2 py-md-3">
+                    <h6 class="mb-0 fs-6 fs-md-5">
                         <i class="fas fa-ruler-vertical"></i> Medidas por Zona
-                    </h5>
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2 p-md-3">
                     {% if zonas %}
                         {% for zona in zonas %}
-                            <div class="mb-4">
-                                <h6 class="border-bottom pb-2">
+                            <div class="mb-3 mb-md-4">
+                                <h6 class="border-bottom pb-2 small">
                                     <strong>{{ zona.get_zona_display }}</strong>
                                 </h6>
                                 {% if zona.medidas.all %}
                                     <div class="table-responsive">
-                                        <table class="table table-sm mb-0">
+                                        <table class="table table-sm mb-0 table-medidas">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Sesión</th>
-                                                    <th>Medida (cm)</th>
-                                                    <th>Cambio</th>
-                                                    <th>Fecha</th>
+                                                    <th class="small px-1 px-md-3">Sesión</th>
+                                                    <th class="small px-1 px-md-3">Medida</th>
+                                                    <th class="small px-1 px-md-3">Cambio</th>
+                                                    <th class="small px-1 px-md-3">Fecha</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {% for medida in zona.medidas.all %}
                                                     <tr>
-                                                        <td>
-                                                            {% if medida.numero_sesion == 1 %}
-                                                                Sesión 1 (Inicial)
-                                                            {% elif medida.numero_sesion == 3 %}
-                                                                Sesión 3-4
-                                                            {% elif medida.numero_sesion == 6 %}
-                                                                Sesión 6-7
-                                                            {% else %}
-                                                                Sesión {{ medida.numero_sesion }}
-                                                            {% endif %}
+                                                        <td class="small px-1 px-md-3">
+                                                            <span class="d-none d-md-inline">
+                                                                {% if medida.numero_sesion == 1 %}
+                                                                    Sesión 1 (Inicial)
+                                                                {% elif medida.numero_sesion == 3 %}
+                                                                    Sesión 3-4
+                                                                {% elif medida.numero_sesion == 6 %}
+                                                                    Sesión 6-7
+                                                                {% else %}
+                                                                    Sesión {{ medida.numero_sesion }}
+                                                                {% endif %}
+                                                            </span>
+                                                            <span class="d-md-none">S{{ medida.numero_sesion }}</span>
                                                         </td>
-                                                        <td>
-                                                            <strong>{{ medida.medida_cm }}</strong>
+                                                        <td class="small px-1 px-md-3">
+                                                            <strong>{{ medida.medida_cm }}</strong><span class="d-none d-sm-inline"> cm</span>
                                                         </td>
-                                                        <td>
+                                                        <td class="small px-1 px-md-3">
                                                             {% if medida.obtener_cambio %}
                                                                 {% if medida.obtener_cambio < 0 %}
                                                                     <span class="badge bg-success">
-                                                                        {{ medida.obtener_cambio|floatformat:2 }} cm
+                                                                        {{ medida.obtener_cambio|floatformat:2 }}
                                                                     </span>
                                                                 {% else %}
                                                                     <span class="badge bg-warning">
-                                                                        +{{ medida.obtener_cambio|floatformat:2 }} cm
+                                                                        +{{ medida.obtener_cambio|floatformat:2 }}
                                                                     </span>
                                                                 {% endif %}
                                                             {% else %}
                                                                 <span class="text-muted">-</span>
                                                             {% endif %}
                                                         </td>
-                                                        <td>{{ medida.fecha_medicion|date:"d/m/Y" }}</td>
+                                                        <td class="small px-1 px-md-3">
+                                                            <span class="d-none d-sm-inline">{{ medida.fecha_medicion|date:"d/m/Y" }}</span>
+                                                            <span class="d-sm-none">{{ medida.fecha_medicion|date:"d/m" }}</span>
+                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
                                 {% else %}
-                                    <p class="text-muted mb-0">Sin medidas registradas</p>
+                                    <p class="text-muted mb-0 small">Sin medidas registradas</p>
                                 {% endif %}
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted">No hay zonas corporales registradas</p>
+                        <p class="text-muted small">No hay zonas corporales registradas</p>
                     {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- Panel Lateral -->
-        <div class="col-lg-4">
+        <div class="col-lg-4 px-1 px-md-3">
             <!-- Acciones -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
+            <div class="card border-0 shadow-sm mb-3 mb-md-4">
+                <div class="card-header bg-light py-2 py-md-3">
+                    <h6 class="mb-0 fs-6 fs-md-5">
                         <i class="fas fa-cog"></i> Acciones
-                    </h5>
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary w-100 mb-2">
+                <div class="card-body p-2 p-md-3">
+                    <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary btn-sm w-100 mb-2">
                         <i class="fas fa-edit"></i> Editar Tratamiento
                     </a>
-                    <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success w-100 mb-2">
+                    <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success btn-sm w-100 mb-2">
                         <i class="fas fa-plus"></i> Nueva Sesión
+                    </a>
+                    <a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}" class="btn btn-info btn-sm w-100 mb-2">
+                        <i class="fas fa-dollar-sign"></i> Estado de Cuenta
                     </a>
                 </div>
             </div>
 
             <!-- Información de Historia Clínica -->
             {% if tratamiento.historia_clinica %}
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
+                <div class="card border-0 shadow-sm mb-3 mb-md-4">
+                    <div class="card-header bg-light py-2 py-md-3">
+                        <h6 class="mb-0 fs-6 fs-md-5">
                             <i class="fas fa-file-medical"></i> Historia Clínica
-                        </h5>
+                        </h6>
                     </div>
-                    <div class="card-body">
-                        <a href="{% url 'historiaclinica:detalle' tratamiento.historia_clinica.pk %}" class="btn btn-info w-100">
+                    <div class="card-body p-2 p-md-3">
+                        <a href="{% url 'historiaclinica:detalle' tratamiento.historia_clinica.pk %}" class="btn btn-info btn-sm w-100">
                             <i class="fas fa-eye"></i> Ver Historia Clínica
                         </a>
                     </div>
@@ -186,30 +195,30 @@
 
             <!-- Sesiones Registradas -->
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
+                <div class="card-header bg-light py-2 py-md-3">
+                    <h6 class="mb-0 fs-6 fs-md-5">
                         <i class="fas fa-list"></i> Sesiones Registradas
-                    </h5>
+                    </h6>
                 </div>
-                <div class="card-body">
-                    <h3 class="mb-0 text-center">
-                        <span class="badge bg-info fs-5">
+                <div class="card-body p-2 p-md-3">
+                    <h4 class="mb-0 text-center fs-5 fs-md-3">
+                        <span class="badge bg-info">
                             {{ evoluciones.count }}
                         </span>
-                    </h3>
+                    </h4>
                     {% if evoluciones %}
-                        <hr>
+                        <hr class="my-2">
                         <div class="list-group list-group-flush">
                             {% for evolucion in evoluciones|dictsort:"numero_sesion"|slice:"-5:" %}
                                 <a href="#" class="list-group-item list-group-item-action py-2 px-0">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <strong>Sesión {{ evolucion.numero_sesion }}</strong>
+                                            <strong class="small">Sesión {{ evolucion.numero_sesion }}</strong>
                                             <p class="mb-0 small text-muted">
                                                 {{ evolucion.fecha_sesion|date:"d/m/Y" }}
                                             </p>
                                         </div>
-                                        <span class="badge bg-secondary">
+                                        <span class="badge bg-secondary small">
                                             {{ evolucion.duracion_minutos }}min
                                         </span>
                                     </div>
@@ -224,6 +233,14 @@
 </div>
 
 <style>
+    /* Quitar padding del container en móvil */
+    @media (max-width: 767px) {
+        .container-fluid {
+            padding: 0 !important;
+        }
+    }
+
+    /* Ajustes generales */
     .card {
         border-radius: 8px;
     }
@@ -242,11 +259,6 @@
         padding: 0.4rem 0.6rem;
     }
 
-    .table-sm th,
-    .table-sm td {
-        padding: 0.5rem;
-    }
-
     .btn {
         border-radius: 5px;
         transition: all 0.3s;
@@ -255,6 +267,40 @@
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Ajustes para móvil */
+    @media (max-width: 575px) {
+        .table-medidas {
+            font-size: 0.7rem;
+        }
+        .table-medidas td, .table-medidas th {
+            padding: 0.3rem 0.15rem !important;
+            vertical-align: middle;
+        }
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.25em 0.4em;
+        }
+        .btn-sm {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+        }
+        h6.small {
+            font-size: 0.85rem;
+        }
+        p.small, .small {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (min-width: 576px) and (max-width: 767px) {
+        .table-medidas {
+            font-size: 0.8rem;
+        }
+        .table-medidas td, .table-medidas th {
+            padding: 0.4rem 0.2rem !important;
+        }
     }
 </style>
 {% endblock %}
