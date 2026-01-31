@@ -19,6 +19,12 @@ class CitaListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Cita.objects.all().order_by('-fecha_hora')
+        ahora = timezone.now()
+        for cita in queryset:
+            hora_fin = cita.get_hora_fin()
+            if cita.estado in ['disponible', 'ocupada'] and hora_fin < ahora:
+                cita.estado = 'completada'
+                cita.save(update_fields=['estado'])
         estado = self.request.GET.get('estado')
         if estado:
             queryset = queryset.filter(estado=estado)

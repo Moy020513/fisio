@@ -3,6 +3,19 @@ from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTrata
 
 
 class TratamientoEstaticoForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        paciente = cleaned_data.get('paciente')
+        historia_clinica = cleaned_data.get('historia_clinica')
+        if paciente and historia_clinica:
+            # Validar que la historia clínica pertenezca al paciente seleccionado
+            if historia_clinica.paciente != paciente:
+                self.add_error('historia_clinica', 'La historia clínica no pertenece al paciente seleccionado.')
+            # Validar unicidad solo si ya existe un tratamiento con esa historia clínica para otro paciente
+            existe = TratamientoEstetico.objects.filter(historia_clinica=historia_clinica).exclude(paciente=paciente).exists()
+            if existe:
+                self.add_error('historia_clinica', 'Ya existe un Tratamiento Estético con esta Historia clínica para otro paciente.')
+        return cleaned_data
     # Zonas principales
     ZONA_PRINCIPAL_CHOICES = [
         ('', 'Seleccionar zona principal...'),
@@ -10,7 +23,7 @@ class TratamientoEstaticoForm(forms.ModelForm):
         ('espalda', 'ESPALDA'),
         ('pierna', 'PIERNA'),
     ]
-    
+
     zona_principal = forms.ChoiceField(
         choices=ZONA_PRINCIPAL_CHOICES,
         required=False,
@@ -20,7 +33,7 @@ class TratamientoEstaticoForm(forms.ModelForm):
             'onchange': 'mostrarZonasEspecificas(this.value)'
         })
     )
-    
+
     # Campos para Abdomen
     abdomen_alto = forms.DecimalField(
         label='Abdomen alto (cm)',

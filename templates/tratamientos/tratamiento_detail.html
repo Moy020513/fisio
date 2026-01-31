@@ -168,9 +168,6 @@
                     <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary btn-sm w-100 mb-2">
                         <i class="fas fa-edit"></i> Editar Tratamiento
                     </a>
-                    <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success btn-sm w-100 mb-2">
-                        <i class="fas fa-plus"></i> Nueva Sesión
-                    </a>
                     <a href="{% url 'tratamientos:estado_cuenta' tratamiento.pk %}" class="btn btn-info btn-sm w-100 mb-2">
                         <i class="fas fa-dollar-sign"></i> Estado de Cuenta
                     </a>
@@ -194,40 +191,41 @@
             {% endif %}
 
             <!-- Sesiones Registradas -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light py-2 py-md-3">
-                    <h6 class="mb-0 fs-6 fs-md-5">
-                        <i class="fas fa-list"></i> Sesiones Registradas
-                    </h6>
+                <!-- Historial de Zonas a Trabajar -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light py-2 py-md-3">
+                        <h6 class="mb-0 fs-6 fs-md-5">
+                            <i class="fas fa-map-marker-alt"></i> Historial de Zonas a Trabajar
+                        </h6>
+                    </div>
+                    <div class="card-body p-2 p-md-3">
+                        {% if zonas %}
+                            <ul class="list-group list-group-flush mb-2">
+                                {% for zona in zonas %}
+                                    <li class="list-group-item py-2 px-0">
+                                        <strong>{{ zona.get_zona_display }}</strong>
+                                        {% if zona.descripcion_adicional %}<br><span class="text-muted small">{{ zona.descripcion_adicional }}</span>{% endif %}
+                                        {% if zona.medidas.all %}
+                                            <ul class="mb-0 mt-1 small">
+                                                {% for medida in zona.medidas.all %}
+                                                    <li>
+                                                        <span class="text-muted">{{ medida.fecha_medicion|date:"d/m/Y" }}:</span>
+                                                        <strong>{{ medida.medida_cm }} cm</strong>
+                                                        {% if medida.obtener_cambio %}
+                                                            <span class="badge bg-success ms-1">{{ medida.obtener_cambio|floatformat:2 }}</span>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted small">No hay zonas corporales registradas</p>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="card-body p-2 p-md-3">
-                    <h4 class="mb-0 text-center fs-5 fs-md-3">
-                        <span class="badge bg-info">
-                            {{ evoluciones.count }}
-                        </span>
-                    </h4>
-                    {% if evoluciones %}
-                        <hr class="my-2">
-                        <div class="list-group list-group-flush">
-                            {% for evolucion in evoluciones|dictsort:"numero_sesion"|slice:"-5:" %}
-                                <a href="#" class="list-group-item list-group-item-action py-2 px-0">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong class="small">Sesión {{ evolucion.numero_sesion }}</strong>
-                                            <p class="mb-0 small text-muted">
-                                                {{ evolucion.fecha_sesion|date:"d/m/Y" }}
-                                            </p>
-                                        </div>
-                                        <span class="badge bg-secondary small">
-                                            {{ evolucion.duracion_minutos }}min
-                                        </span>
-                                    </div>
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
         </div>
     </div>
 </div>

@@ -1,3 +1,5 @@
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,6 +9,17 @@ from tratamientos.models import TratamientoEstetico, MedidasZona, EvolucionTrata
 from tratamientos.forms import TratamientoEstaticoForm, MedidasZonaForm, EvolucionTratamientoEstaticoForm, EstadoCuentaForm, AnticipoForm
 from pacientes.models import Paciente
 from datetime import date
+
+# ...existing code...
+
+# Colocar la vista de eliminación al final para asegurar importaciones
+class TratamientoEstaticoDeleteView(LoginRequiredMixin, DeleteView):
+    model = TratamientoEstetico
+    template_name = 'tratamientos/tratamiento_confirm_delete.html'
+
+    def get_success_url(self):
+        messages.success(self.request, 'Tratamiento eliminado correctamente')
+        return reverse_lazy('tratamientos:lista')
 
 
 class TratamientoEstaticoListView(LoginRequiredMixin, ListView):
@@ -73,50 +86,42 @@ class TratamientoEstaticoCreateView(LoginRequiredMixin, CreateView):
         # Guardar el tratamiento
         response = super().form_valid(form)
         tratamiento = self.object
-        
+
         # Procesar zonas y medidas
         zona_principal = self.request.POST.get('zona_principal')
-        
+
         if zona_principal == 'abdomen':
-            # Sesión 1
             self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s1'), 1)
             self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s1'), 1)
             self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s1'), 1)
-            # Sesión 3-4
             self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s34'), 3)
             self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s34'), 3)
             self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s34'), 3)
-            # Sesión 6-7
             self._crear_zona_medida(tratamiento, 'abdomen_alto', self.request.POST.get('abdomen_alto_s67'), 6)
             self._crear_zona_medida(tratamiento, 'cintura', self.request.POST.get('cintura_s67'), 6)
             self._crear_zona_medida(tratamiento, 'abdomen_bajo', self.request.POST.get('abdomen_bajo_s67'), 6)
         elif zona_principal == 'espalda':
-            # Sesión 1
             self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s1'), 1)
             self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s1'), 1)
             self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s1'), 1)
-            # Sesión 3-4
             self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s34'), 3)
             self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s34'), 3)
             self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s34'), 3)
-            # Sesión 6-7
             self._crear_zona_medida(tratamiento, 'espalda_alta', self.request.POST.get('espalda_alta_s67'), 6)
             self._crear_zona_medida(tratamiento, 'zona_axilar', self.request.POST.get('zona_axilar_s67'), 6)
             self._crear_zona_medida(tratamiento, 'espalda_baja', self.request.POST.get('espalda_baja_s67'), 6)
         elif zona_principal == 'pierna':
-            # Sesión 1
             self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s1'), 1)
             self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s1'), 1)
             self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s1'), 1)
-            # Sesión 3-4
             self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s34'), 3)
             self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s34'), 3)
             self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s34'), 3)
-            # Sesión 6-7
             self._crear_zona_medida(tratamiento, 'femur_proximal', self.request.POST.get('femur_proximal_s67'), 6)
             self._crear_zona_medida(tratamiento, 'femur_medial', self.request.POST.get('femur_medial_s67'), 6)
             self._crear_zona_medida(tratamiento, 'cadera_distal', self.request.POST.get('cadera_distal_s67'), 6)
-        
+
+        messages.success(self.request, 'Tratamiento creado correctamente')
         return response
     
     def _crear_zona_medida(self, tratamiento, zona_key, valor, numero_sesion):
@@ -419,4 +424,18 @@ class AnticipoDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Anticipo eliminado correctamente')
         return reverse_lazy('tratamientos:estado_cuenta', kwargs={'tratamiento_pk': self.object.estado_cuenta.tratamiento.pk})
+
+
+class TratamientoHistorialView(DetailView):
+    model = TratamientoEstetico
+    template_name = 'tratamientos/historial.html'
+    context_object_name = 'tratamiento'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zonas'] = self.object.zonas_corporales.all()
+        context['evoluciones'] = self.object.evoluciones.all()
+        return context
+
+
 

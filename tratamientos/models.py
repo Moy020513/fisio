@@ -6,7 +6,7 @@ from pacientes.models import Paciente
 class TratamientoEstetico(models.Model):
     """Tratamiento estético del paciente"""
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='tratamientos_esteticos')
-    historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='tratamiento_estetico')
+    historia_clinica = models.ForeignKey(HistoriaClinica, on_delete=models.CASCADE, related_name='tratamientos_esteticos')
     
     # Fechas
     fecha_inicio = models.DateField(auto_now_add=True)

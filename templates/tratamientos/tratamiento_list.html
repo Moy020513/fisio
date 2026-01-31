@@ -128,8 +128,8 @@
                                             <a href="{% url 'tratamientos:editar' tratamiento.pk %}" class="btn btn-primary btn-sm" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="{% url 'tratamientos:evolucion-crear' tratamiento.pk %}" class="btn btn-success btn-sm" title="Nueva sesión">
-                                                <i class="fas fa-plus"></i>
+                                            <a href="{% url 'tratamientos:eliminar' tratamiento.pk %}" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar este tratamiento?');">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
