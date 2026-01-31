@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Confirmar eliminación</h5>
+                </div>
+                <div class="card-body">
+                    <p>¿Estás seguro de que deseas eliminar el tratamiento estético de <strong>{{ object.paciente }}</strong>?</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <a href="{% url 'tratamientos:lista' %}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

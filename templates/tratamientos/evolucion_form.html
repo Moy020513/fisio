@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+{% block content %}
+  <h2>Nueva Evolución</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="javascript:history.back()" class="btn btn-secondary">Cancelar</a>
+  </form>
+{% endblock %}
