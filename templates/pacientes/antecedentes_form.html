@@ -57,6 +57,19 @@
                             {{ form.regimen_alimenticio }}
                         </div>
 
+                        <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-wine-glass-alt"></i> Hábitos</h6>
+                        <div class="form-check form-switch mb-3">
+                            {{ form.tabaco }} <label class="form-check-label">{{ form.tabaco.label }}</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.alcohol_frecuencia.label }}</label>
+                            {{ form.alcohol_frecuencia }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.azucar_descripcion.label }}</label>
+                            {{ form.azucar_descripcion }}
+                        </div>
+
                         <h6 class="mb-3 mt-4 border-bottom pb-2"><i class="fas fa-drumstick-bite"></i> Detalles nutricionales</h6>
                         <div class="mb-3">
                             <label class="form-label">{{ form.carnes.label }}</label>

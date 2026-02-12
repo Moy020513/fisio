@@ -278,6 +278,37 @@
                                 </div>
                             </div>
 
+                            <!-- Hábitos -->
+                            <div class="subseccion mb-4">
+                                <div class="subseccion-titulo">
+                                    <i class="fas fa-wine-glass-alt"></i> Hábitos
+                                </div>
+                                <div class="subseccion-contenido">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Tabaco</span>
+                                                <span class="badge {% if antecedentes.tabaco %}bg-danger{% else %}bg-secondary{% endif %}">
+                                                    {% if antecedentes.tabaco %}Sí{% else %}No{% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Alcohol</span>
+                                                <span class="dato-valor">{{ antecedentes.get_alcohol_frecuencia_display|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="dato-box">
+                                                <span class="dato-label">Azúcar</span>
+                                                <span class="dato-valor">{{ antecedentes.azucar_descripcion|default:"-" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Sueño e Hidratación -->
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">

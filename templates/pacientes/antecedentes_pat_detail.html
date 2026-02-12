@@ -4,50 +4,95 @@
 {% block page_title %}Antecedentes Patológicos{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid pat-full-bleed">
     <div class="row">
         <div class="col-lg-8 offset-lg-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div class="card border-0 shadow-sm pat-card">
+                <div class="card-header pat-header d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="mb-0"><i class="fas fa-heart"></i> Antecedentes Patológicos</h5>
-                        <small class="text-muted">{{ paciente.nombre_completo }}</small>
+                        <div class="pat-subtitle">{{ paciente.nombre_completo }}</div>
                     </div>
                     <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Volver al listado
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body pat-body">
                     {% if antecedentes_pat %}
-                        <div class="row">
-                            <div class="col-md-4"><p><strong>Hipertensión:</strong> {% if antecedentes_pat.hipertension %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Diabetes:</strong> {% if antecedentes_pat.diabetes %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Cáncer:</strong> {% if antecedentes_pat.cancer %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Triglicéridos:</strong> {% if antecedentes_pat.trigliceridos %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Obesidad:</strong> {% if antecedentes_pat.obesidad %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Tiroides:</strong> {% if antecedentes_pat.tiroides %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
+                        <div class="pat-grid">
+                            <section class="pat-section">
+                                <div class="pat-section-title pat-title-condiciones"><i class="fas fa-heartbeat"></i> Condiciones</div>
+                                <div class="pat-items">
+                                    <div class="pat-item">
+                                        <span class="pat-label">Hipertension</span>
+                                        <span class="pat-chip {% if antecedentes_pat.hipertension %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.hipertension %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Diabetes</span>
+                                        <span class="pat-chip {% if antecedentes_pat.diabetes %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.diabetes %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Cancer</span>
+                                        <span class="pat-chip {% if antecedentes_pat.cancer %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.cancer %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Trigliceridos</span>
+                                        <span class="pat-chip {% if antecedentes_pat.trigliceridos %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.trigliceridos %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Obesidad</span>
+                                        <span class="pat-chip {% if antecedentes_pat.obesidad %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.obesidad %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Tiroides</span>
+                                        <span class="pat-chip {% if antecedentes_pat.tiroides %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.tiroides %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {% if mostrar_campos_femeninos %}
+                            <section class="pat-section">
+                                <div class="pat-section-title pat-title-femeninos"><i class="fas fa-venus"></i> Antecedentes ginecologicos</div>
+                                <div class="pat-items">
+                                    <div class="pat-item">
+                                        <span class="pat-label">SOP</span>
+                                        <span class="pat-chip {% if antecedentes_pat.sop %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.sop %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Menopausia</span>
+                                        <span class="pat-chip {% if antecedentes_pat.menopausia %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.menopausia %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Prob. embarazo</span>
+                                        <span class="pat-chip {% if antecedentes_pat.probabilidad_embarazo %}pat-yes{% else %}pat-no{% endif %}">{% if antecedentes_pat.probabilidad_embarazo %}Si{% else %}No{% endif %}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Ultima menstruacion</span>
+                                        <span class="pat-value">{{ antecedentes_pat.fecha_ultima_menstruacion|date:"d/m/Y"|default:"-" }}</span>
+                                    </div>
+                                    <div class="pat-item">
+                                        <span class="pat-label">Numero de partos</span>
+                                        <span class="pat-value">{{ antecedentes_pat.numero_partos|default:"0" }}</span>
+                                    </div>
+                                </div>
+                            </section>
+                            {% endif %}
+
+                            <section class="pat-section pat-span-2-mobile">
+                                <div class="pat-section-title pat-title-cirugias"><i class="fas fa-scalpel"></i> Cirugias</div>
+                                <div class="pat-note">{{ antecedentes_pat.cirugias|default:"-" }}</div>
+                            </section>
+
+                            <section class="pat-section pat-span-2-mobile">
+                                <div class="pat-section-title pat-title-notas"><i class="fas fa-sticky-note"></i> Notas</div>
+                                <div class="pat-note">{{ antecedentes_pat.notas|default:"-" }}</div>
+                            </section>
                         </div>
-
-                        {% if mostrar_campos_femeninos %}
-                        <div class="row mt-3">
-                            <div class="col-md-4"><p><strong>SOP:</strong> {% if antecedentes_pat.sop %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Menopausia:</strong> {% if antecedentes_pat.menopausia %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-4"><p><strong>Probabilidad de embarazo:</strong> {% if antecedentes_pat.probabilidad_embarazo %}<span class="text-danger fw-semibold">Sí</span>{% else %}<span class="text-secondary fw-semibold">No</span>{% endif %}</p></div>
-                            <div class="col-md-6"><p><strong>Fecha última menstruación:</strong> {{ antecedentes_pat.fecha_ultima_menstruacion|date:"d/m/Y"|default:"-" }}</p></div>
-                            <div class="col-md-6"><p><strong>Número de partos:</strong> {{ antecedentes_pat.numero_partos|default:"0" }}</p></div>
-                        </div>
-                        {% endif %}
-
-                        <h6 class="mt-4 border-bottom pb-2"><i class="fas fa-scalpel"></i> Cirugías</h6>
-                        <p>{{ antecedentes_pat.cirugias|default:"-" }}</p>
-
-                        <h6 class="mt-4 border-bottom pb-2"><i class="fas fa-sticky-note"></i> Notas</h6>
-                        <p>{{ antecedentes_pat.notas|default:"-" }}</p>
                     {% else %}
-                        <div class="alert alert-info mb-0">No hay antecedentes patológicos registrados.</div>
+                        <div class="pat-empty">No hay antecedentes patologicos registrados.</div>
                     {% endif %}
                 </div>
-                <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                <div class="card-footer pat-footer d-flex justify-content-between align-items-center">
                     <a href="{% url 'pacientes:antecedentes-patologicos-lista' %}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Volver al listado
                     </a>
@@ -59,4 +104,166 @@
         </div>
     </div>
 </div>
+
+<style>
+    .pat-card {
+        border: 1px solid #e6eaef;
+        overflow: hidden;
+    }
+
+    .pat-header {
+        background: linear-gradient(135deg, #f7f9fc 0%, #eef3f8 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .pat-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .pat-body {
+        background: #fbfcfe;
+    }
+
+    .pat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .pat-section {
+        background: #ffffff;
+        border: 1px solid #e6eaef;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .pat-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        border-radius: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .pat-title-condiciones {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .pat-title-femeninos {
+        background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    }
+
+    .pat-title-cirugias {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    }
+
+    .pat-title-notas {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+
+    .pat-items {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .pat-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        background: #f8fafc;
+        border: 1px dashed #e2e8f0;
+    }
+
+    .pat-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .pat-value {
+        color: #0f172a;
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .pat-chip {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+    }
+
+    .pat-yes {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .pat-no {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .pat-note {
+        color: #1f2937;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .pat-empty {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px dashed #cbd5f5;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .pat-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .pat-span-2-mobile {
+        grid-column: span 1;
+    }
+
+    @media (max-width: 767px) {
+        .pat-full-bleed {
+            padding: 0 !important;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .pat-card {
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .pat-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pat-items {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 {% endblock %}

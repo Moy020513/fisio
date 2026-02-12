@@ -46,6 +46,13 @@ TIPO_DIETA_CHOICES = [
     ('otra', 'Otra'),
 ]
 
+ALCOHOL_FRECUENCIA_CHOICES = [
+    ('no', 'No'),
+    ('social', 'Social'),
+    ('diario', 'Diario'),
+    ('regularmente', 'Regularmente'),
+]
+
 ESCALA_EVA_CHOICES = [(str(i), str(i)) for i in range(0, 11)]
 
 class Paciente(models.Model):
@@ -186,6 +193,11 @@ class AntecedentesNoPatologicos(models.Model):
     # Alimentación general
     tipo_alimentacion = models.CharField(max_length=20, choices=TIPO_DIETA_CHOICES, blank=True, null=True)
     regimen_alimenticio = models.TextField(blank=True, null=True)
+
+    # Hábitos
+    tabaco = models.BooleanField(default=False)
+    alcohol_frecuencia = models.CharField(max_length=20, choices=ALCOHOL_FRECUENCIA_CHOICES, default='no')
+    azucar_descripcion = models.TextField(blank=True, null=True)
     
     # Detalles nutricionales
     carnes = models.TextField(blank=True, null=True, help_text="Tipos de carnes consumidas")

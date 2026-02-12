@@ -268,7 +268,8 @@ class AntecedentesNoPatologicosForm(forms.ModelForm):
     class Meta:
         model = AntecedentesNoPatologicos
         fields = ['diagnostico', 'pronostico', 'realiza_actividad_fisica', 'frecuencia_ejercicio', 
-              'tipo_ejercicio', 'tipo_alimentacion', 'regimen_alimenticio', 'carnes', 'legumbres',
+              'tipo_ejercicio', 'tipo_alimentacion', 'regimen_alimenticio', 'tabaco',
+                  'alcohol_frecuencia', 'azucar_descripcion', 'carnes', 'legumbres',
                   'hidratos_carbono', 'lipidos', 'proteinas', 'dieta', 'hidratacion',
                   'horas_sueno', 'calidad_sueno', 'suplementacion']
         widgets = {
@@ -294,6 +295,13 @@ class AntecedentesNoPatologicosForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 2,
                 'placeholder': 'Régimen alimenticio'
+            }),
+            'tabaco': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'alcohol_frecuencia': forms.Select(attrs={'class': 'form-select'}),
+            'azucar_descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Descripción de consumo de azúcar'
             }),
             'carnes': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -352,6 +360,9 @@ class AntecedentesNoPatologicosForm(forms.ModelForm):
             'tipo_ejercicio': 'Tipo de Ejercicio',
             'tipo_alimentacion': 'Tipo de Alimentación',
             'regimen_alimenticio': 'Régimen Alimenticio',
+            'tabaco': 'Tabaco',
+            'alcohol_frecuencia': 'Alcohol',
+            'azucar_descripcion': 'Azúcar (descripción)',
             'carnes': 'Carnes',
             'legumbres': 'Legumbres',
             'hidratos_carbono': 'Hidratos de Carbono',

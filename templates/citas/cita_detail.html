@@ -4,30 +4,50 @@
 {% block page_title %}Detalle de Cita{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid cita-full-bleed">
     <div class="row">
         <div class="col-lg-8 offset-lg-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div class="card border-0 shadow-sm cita-card">
+                <div class="card-header cita-header d-flex justify-content-between align-items-center">
                     <div>
-                            <h5 class="mb-1"><i class="fas fa-calendar-alt"></i> {% if cita.paciente %}{{ cita.paciente.nombre_completo }}{% else %}Sin paciente{% endif %}</h5>
-                        <small class="text-muted">{{ cita.fecha_hora|date:"d/m/Y" }} - {{ cita.fecha_hora|time:"H:i" }} a {{ cita.get_hora_fin|time:"H:i" }}</small>
+                        <h5 class="mb-1"><i class="fas fa-calendar-alt"></i> {% if cita.paciente %}{{ cita.paciente.nombre_completo }}{% else %}Sin paciente{% endif %}</h5>
+                        <div class="cita-subtitle">{{ cita.fecha_hora|date:"d/m/Y" }} - {{ cita.fecha_hora|time:"H:i" }} a {{ cita.get_hora_fin|time:"H:i" }}</div>
                     </div>
-                    <span class="badge {% if cita.estado == 'disponible' %}bg-success{% elif cita.estado == 'ocupada' %}bg-primary{% elif cita.estado == 'completada' %}bg-info{% else %}bg-danger{% endif %}">
+                    <span class="badge cita-badge {% if cita.estado == 'disponible' %}bg-success{% elif cita.estado == 'ocupada' %}bg-primary{% elif cita.estado == 'completada' %}bg-info{% else %}bg-danger{% endif %}">
                         {{ cita.get_estado_display|default:cita.estado }}
                     </span>
                 </div>
-                <div class="card-body">
-                    <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-user-md"></i> Terapeuta</h6>
-                    <p class="mb-3">{{ cita.terapeuta.nombre_completo|default:"Sin asignar" }}</p>
+                <div class="card-body cita-body">
+                    <div class="cita-grid">
+                        <section class="cita-section">
+                            <div class="cita-section-title cita-title-terapeuta"><i class="fas fa-user-md"></i> Terapeuta</div>
+                            <div class="cita-kv">
+                                <span class="cita-value">{{ cita.terapeuta.nombre_completo|default:"Sin asignar" }}</span>
+                            </div>
+                        </section>
 
-                    <h6 class="mb-3 border-bottom pb-2"><i class="fas fa-list"></i> Detalles</h6>
-                    <p><strong>Tipo de sesión:</strong> {{ cita.get_tipo_sesion_display }}</p>
-                    <p><strong>Duración:</strong> {{ cita.duracion_minutos }} minutos</p>
-                    <p><strong>Motivo:</strong> {{ cita.motivo_cita|default:"-" }}</p>
-                    <p><strong>Notas adicionales:</strong> {{ cita.notas_adicionales|default:"-" }}</p>
+                        <section class="cita-section">
+                            <div class="cita-section-title cita-title-detalles"><i class="fas fa-list"></i> Detalles</div>
+                            <div class="cita-kv">
+                                <span class="cita-label">Tipo de sesion</span>
+                                <span class="cita-value">{{ cita.get_tipo_sesion_display }}</span>
+                            </div>
+                            <div class="cita-kv">
+                                <span class="cita-label">Duracion</span>
+                                <span class="cita-value">{{ cita.duracion_minutos }} minutos</span>
+                            </div>
+                            <div class="cita-kv">
+                                <span class="cita-label">Motivo</span>
+                                <span class="cita-value">{{ cita.motivo_cita|default:"-" }}</span>
+                            </div>
+                            <div class="cita-kv">
+                                <span class="cita-label">Notas adicionales</span>
+                                <span class="cita-value">{{ cita.notas_adicionales|default:"-" }}</span>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-                <div class="card-footer bg-light d-flex justify-content-between">
+                <div class="card-footer cita-footer d-flex justify-content-between">
                     <a href="{% url 'citas:lista' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                     <div class="d-flex gap-2">
                         <a href="{% url 'citas:editar' cita.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Editar</a>
@@ -38,4 +58,115 @@
         </div>
     </div>
 </div>
+
+<style>
+    .cita-card {
+        border: 1px solid #e6eaef;
+        overflow: hidden;
+    }
+
+    .cita-header {
+        background: linear-gradient(135deg, #f7f9fc 0%, #eef3f8 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .cita-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .cita-badge {
+        font-weight: 600;
+        padding: 0.35rem 0.7rem;
+    }
+
+    .cita-body {
+        background: #fbfcfe;
+    }
+
+    .cita-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .cita-section {
+        background: #ffffff;
+        border: 1px solid #e6eaef;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .cita-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        border-radius: 0.5rem;
+        padding: 0.45rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cita-title-terapeuta {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    }
+
+    .cita-title-detalles {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    .cita-kv {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.4rem 0;
+        border-bottom: 1px dashed #eef2f7;
+    }
+
+    .cita-kv:last-child {
+        border-bottom: none;
+    }
+
+    .cita-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .cita-value {
+        color: #0f172a;
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+    }
+
+    .cita-footer {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 767px) {
+        .cita-full-bleed {
+            padding: 0 !important;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .cita-card {
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .cita-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 {% endblock %}
